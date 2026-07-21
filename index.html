@@ -1,0 +1,4032 @@
+<!DOCTYPE html>
+<html lang="ar" dir="rtl">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title> معهد التأصيل(الفرع الثاني)</title>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/xlsx/0.18.5/xlsx.full.min.js"></script>
+
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.rtl.min.css">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <link href="https://fonts.googleapis.com/css2?family=Cairo:wght@300;400;700;800;900&display=swap" rel="stylesheet">
+
+    <style>
+        :root {
+            --blue-black: #0b132b; 
+            --sidebar-bg: #1c2541; 
+            --pure-black: #000000;
+            --pure-white: #ffffff;
+            --light-grey: #f4f7f6;
+            --success-color: #198754;
+            --danger-color: #dc3545;
+        }
+
+        body { font-family: 'Cairo', sans-serif; background-color: var(--light-grey); margin: 0; overflow-x: hidden; }
+
+        /* --- ISBEDELKA CUSUB: BORDERS IYO SCROLL --- */
+        .table-responsive, .page-content .card {
+            overflow-x: auto; /* Tani waxay keenaysaa scroll-ka jiifka ah */
+            -webkit-overflow-scrolling: touch;
+        }
+
+        table {
+            border-collapse: collapse !important;
+            width: 100%;
+            min-width: 600px; /* Waxay hubinaysaa in miisku uusan aad u yaraanin */
+        }
+
+        table, th, td {
+            border: 1px solid #dee2e6 !important; /* Tani waa xuduudka (borders) */
+        }
+
+        thead {
+            background-color: var(--blue-black) !important;
+            color: white !important;
+        }
+        /* ------------------------------------------ */
+/* Dashboard Muuqaal dagan */
+.welcome-box {
+    background: #0b132b;
+    border-radius: 12px;
+}
+
+.stat-card-static {
+    border-radius: 8px;
+    height: 100px;
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+}
+
+.icon-box {
+    width: 45px;
+    height: 45px;
+    border-radius: 50%;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-size: 1.2rem;
+}
+
+/* Midabada fudud ee icon-yada gadaashooda */
+.bg-primary-light { background: #e7f1ff; }
+.bg-success-light { background: #e6f4ea; }
+.bg-info-light    { background: #e1f5fe; }
+.bg-danger-light  { background: #fce8e8; }
+
+        /* Sidebar Style */
+        #sidebar {
+            width: 280px; height: 100vh; position: fixed; right: -280px; top: 0;
+            background: var(--sidebar-bg); color: var(--pure-white);
+            transition: 0.4s; z-index: 1050; box-shadow: -10px 0 30px rgba(0,0,0,0.5);
+            display: flex; flex-direction: column; overflow: hidden; /* Header wuu joogsanayaa, menu-ga oo kaliya ayaa scroll-gareyn doona */
+        }
+        #sidebar.active { right: 0; }
+        .sidebar-header { padding: 25px; background: var(--pure-black); display: flex; justify-content: space-between; align-items: center; flex-shrink: 0; }
+
+        /* Menu-ga sidebar-ka: SCROLL UP/DOWN marka uu ka badnaado dhererka shaashadda */
+        #sidebar > ul.list-unstyled {
+            flex: 1 1 auto;
+            min-height: 0; /* MUHIIM: flexbox-ku wuxuu kordhinayaa qaybtan si aan loo ogolayn scroll-ka haddii tan la iska daayo */
+            overflow-y: auto;
+            overflow-x: hidden;
+            padding-bottom: 40px;
+            -webkit-overflow-scrolling: touch;
+        }
+        #sidebar > ul.list-unstyled::-webkit-scrollbar { width: 6px; }
+        #sidebar > ul.list-unstyled::-webkit-scrollbar-track { background: transparent; }
+        #sidebar > ul.list-unstyled::-webkit-scrollbar-thumb { background: rgba(255,255,255,0.25); border-radius: 10px; }
+        #sidebar > ul.list-unstyled::-webkit-scrollbar-thumb:hover { background: rgba(255,255,255,0.4); }
+
+        .nav-link {
+            padding: 12px 25px; display: flex; align-items: center; justify-content: space-between;
+            color: #d1d1d1; text-decoration: none; border-bottom: 1px solid rgba(255,255,255,0.05);
+            cursor: pointer; transition: 0.3s;
+        }
+        .nav-link:hover { background: var(--blue-black); color: white; }
+        .submenu { background: rgba(0,0,0,0.2); display: none; list-style: none; padding: 0; }
+        .submenu li a { padding: 10px 45px; display: block; color: #b0b0b0; text-decoration: none; font-size: 0.85rem; cursor: pointer; }
+        .submenu li a:hover { color: white; background: rgba(255,255,255,0.05); }
+        
+        .overlay { display: none; position: fixed; inset: 0; background: rgba(0, 0, 0, 0.7); z-index: 1040; backdrop-filter: blur(3px);cursor: pointer; /* Tani waxay tusaysaa in meesha la taaban karo */ }
+        .overlay.active { display: block; }
+
+        .navbar { background: var(--pure-white); box-shadow: 0 2px 15px rgba(0,0,0,0.05); padding: 15px 25px; }
+        .btn-menu, .btn-back { background: var(--blue-black); color: white; border: none; padding: 8px 15px; border-radius: 6px; }
+
+        /* Attendance Visuals */
+        .card { border: none; border-radius: 15px; box-shadow: 0 5px 20px rgba(0,0,0,0.05); margin-bottom: 20px; }
+        .btn-primary-custom { background: var(--blue-black); color: white; border: none; padding: 12px; border-radius: 10px; width: 100%; font-weight: bold; }
+        
+        .status-badge { padding: 6px 12px; border-radius: 50px; font-weight: bold; font-size: 0.8rem; }
+        .bg-present { background: rgba(25, 135, 84, 0.1); color: var(--success-color); border: 1px solid var(--success-color); }
+        .bg-absent { background: rgba(220, 53, 69, 0.1); color: var(--danger-color); border: 1px solid var(--danger-color); }
+
+        .filter-box { background: white; padding: 20px; border-radius: 12px; border-right: 5px solid var(--blue-black); }
+
+        .att-btn-group .btn-check:checked + .btn-outline-success { background-color: var(--success-color); color: white; }
+        .att-btn-group .btn-check:checked + .btn-outline-danger { background-color: var(--danger-color); color: white; }
+
+        /* Report Card Style */
+        .report-card { background: white; border: 2px solid var(--blue-black); border-radius: 15px; overflow: hidden; margin-top: 20px; }
+        .report-header { background: #f8f9fa; padding: 25px; border-bottom: 2px solid var(--blue-black); }
+        .report-stat-box { border-left: 1px solid #dee2e6; padding: 10px; text-align: center; }
+        .report-stat-box:last-child { border-left: none; }
+/* Table-ku ha u balaarto qoraalka dhexdiisa ah */
+.table {
+    width: auto !important; /* Miisku yuusan khasab ku noqon 100% */
+    min-width: 100%;       /* Laakiin ugu yaraan ha buuxiyo meesha uu joogo */
+    table-layout: auto;    /* Tani waxay u ogolaanaysaa inuu la fado qoraalka */
+}
+
+/* Qoraalka unugyada (Cells) ku jira ha la fado, yaan la jarin (No Wrap) */
+.table th, .table td {
+    text-align: right !important; /* Qoraalka midig gee */
+    white-space: nowrap;   /* Qoraalku hal xariiq ha ahaado si uu table-ka u balaariyo */
+    vertical-align: middle;
+}
+
+/* Scroll-ka ha soo baxo kaliya haddii uu table-ku ka weynaado shaashadda taleefanka */
+.table-responsive {
+    overflow-x: auto;
+    -webkit-overflow-scrolling: touch;
+    border: none !important;
+}
+
+       @media print {
+    /* 1. Qeex dhex-fadhiga warqadda (Standard Margins) */
+    @page {
+        size: auto;
+        margin: 15mm !important; /* Waxay ka dhigaysaa padding siman dhinac kasta */
+    }
+
+    /* 1b. HAGAAJINTA: bogga oo dhan (html/body) waa in loo dhigaa LTR marka la print gareynayo,
+       si darbiga (margin) ee dhinaca bidix iyo midig ay u ahaadaan mid isku mid ah (symmetric).
+       Qaybaha gudaha (sida .admission-card) way sii haystaan direction: rtl / dir="rtl" gooni ahaan,
+       markaa qoraalka Carabiga wuu sii sax ahaanayaa, kaliya bogga guud ayaa la toosinayaa. */
+    html, body {
+        direction: ltr !important;
+    }
+
+    /* 2. Hubi in jirka bogga uusan lahayn margin dheeraad ah */
+    body {
+        margin: 0 !important;
+        padding: 0 !important;
+        background-color: white !important;
+    }
+
+    /* 3. Jadwalku ha buuxiyo ballaca loo oggolaaday (100% of printable area) */
+    #content, .container, .card, .table-responsive {
+        width: 100% !important;
+        margin: 0 !important;
+        padding: 0 !important;
+        overflow: visible !important;
+        display: block !important;
+    }
+
+    /* 4. Qurxinta Jadwalka Print-ka */
+    table {
+        width: 100% !important;
+        border-collapse: collapse !important;
+        table-layout: auto !important;
+    }
+
+    table th, table td {
+        border: 1px solid #000 !important; /* Xariiqmo madow oo cad */
+        padding: 10px !important; /* Padding-ka gudaha ee unugyada */
+        font-size: 11pt !important;
+        text-align: right !important; /* Carabi ahaan midig gee */
+    }
+
+    /* 5. Qari wixii shadow ama background ah oo Print-ka khalkhal gelinaya */
+    .no-print, #sidebar, .overlay, .btn-menu, .navbar, .btn {
+        display: none !important;
+    }
+
+    .card {
+        box-shadow: none !important;
+        border: none !important;
+    }
+    
+    /* 6. Dashboard-ka haddii la print-gareynayo ha u muuqdo mid habaysan */
+    .row {
+        display: flex !important;
+        flex-wrap: wrap !important;
+    }
+    .col-md-3 {
+        width: 25% !important;
+        float: right !important;
+    }
+}
+@media print {
+    /* 1. Qari dhamaan qaybaha aan loo baahnayn */
+    .no-print, 
+    .sidebar, 
+    .navbar, 
+    .row.g-2.mb-4, 
+    #view-results-section .btn,
+    .action-col { 
+        display: none !important; 
+    }
+
+    /* 2. Hubi in table-ku buuxiyo bogga, qoraalkuna madow yahay */
+    body {
+        background-color: white !important;
+        color: black !important;
+    }
+
+    .card {
+        border: none !important;
+        box-shadow: none !important;
+    }
+
+    table {
+        width: 100% !important;
+        border-collapse: collapse !important;
+        color: black !important; /* Midabka grey-ga ka saar */
+    }
+
+    th, td {
+        border: 1px solid #000 !important; /* Xariiq madow oo muuqda */
+        color: black !important;
+        padding: 8px !important;
+    }
+
+    .table-dark {
+        background-color: #eee !important; /* Header-ka ka dhig cawl khafif ah si khadku uusan u lumin */
+        color: black !important;
+    }
+
+    /* 3. Soo bandhig information-ka sare ee report-ka */
+    #reportHeaderInfo {
+        display: block !important;
+    }
+}
+.report-card {
+        width: 750px;
+        background-color: white;
+        border: 1px solid #000;
+        padding: 5px;
+        margin: 20px auto;
+        direction: rtl; /* Right-to-Left */
+    }
+
+    .header-image-container {
+        width: 100%;
+        text-align: center;
+        border-bottom: 2px solid #000;
+        margin-bottom: 5px;
+    }
+
+    .header-image-container img {
+        width: 100%;
+        display: block;
+    }
+
+    .title-box {
+        border: 1px solid #000;
+        text-align: center;
+        padding: 4px;
+        font-size: 22px;
+        font-weight: bold;
+        margin-top: -1px;
+        color: #000;
+    }
+
+    .student-info {
+        width: 100%;
+        border-collapse: collapse;
+        margin-top: -1px;
+    }
+
+    .student-info td {
+        border: 1px solid #000;
+        padding: 8px;
+        font-size: 18px;
+        font-weight: bold;
+        text-align: right;
+        color: #000;
+    }
+
+    .grades-table {
+        width: 100%;
+        border-collapse: collapse;
+        text-align: center;
+        margin-top: 5px;
+    }
+
+    .grades-table th, .grades-table td {
+        border: 1px solid #000;
+        padding: 8px;
+        font-size: 22px;
+        font-weight: bold;
+        color: #000;
+    }
+
+    .col-header { background-color: #dcedc8 !important; } 
+    .col-mid { background-color: #f8bbd0 !important; }    
+    .col-final { background-color: #bbdefb !important; }  
+    .col-total { background-color: #fff9c4 !important; }  
+
+    .summary-table {
+        width: 100%;
+        border-collapse: collapse;
+        margin-top: 10px;
+        text-align: center;
+    }
+
+    .summary-table td {
+        border: 1px solid #000;
+        padding: 10px;
+        font-size: 20px;
+        font-weight: bold;
+        color: #000;
+    }
+
+    .signatures {
+        margin-top: 50px;
+        text-align: left;
+        padding-left: 40px;
+        font-size: 16px;
+        font-weight: bold;
+        line-height: 2.5;
+        color: #000;
+    }
+
+    @media print {
+        body { background: none; padding: 0; }
+        .no-print { display: none; }
+        .report-card { box-shadow: none; border: 1px solid #000; margin: 0; }
+    }
+
+/* Marka la daabacayo badhanka ha qariyo */
+@media print {
+    .no-print {
+        display: none !important;
+    }
+    body {
+        background-color: white !important;
+        padding: 0 !important;
+    }
+    .report-card {
+        margin: 0 auto !important;
+        box-shadow: none !important;
+        border: 1px solid #000 !important;
+    }
+}
+
+/* Midabka biyaha ee tiirka الرقم */
+.col-num-water {
+    background-color: #e0f7fa !important; /* Midabka Light Cyan */
+}
+/* 1. Label-ka kor saaran midig u gee */
+#view-result-cards-section label {
+    display: block !important;
+    text-align: right !important;
+    width: 100% !important;
+}
+
+/* 2. Placeholder-ka iyo Dropdown-ka midig u gee */
+#view-result-cards-section .form-select {
+    direction: rtl !important;
+    text-align: right !important;
+    /* Fallaarta dropdown-ka u wareeji bidix si aysan qoraalka u daboolin */
+    background-position: left 0.75rem center !important;
+    padding-right: 12px !important;
+    padding-left: 35px !important;
+}
+
+@media print {
+    /* Waxay qasbaysaa in midabada (Background Colors) ay muuqdaan */
+    * {
+        -webkit-print-color-adjust: exact !important;
+        print-color-adjust: exact !important;
+    }
+
+    body {
+        background: none !important;
+        padding: 0 !important;
+        margin: 0 !important;
+    }
+
+    .no-print {
+        display: none !important;
+    }
+}
+
+ /* --- 1. CSS-ka caadiga ah ee shaashadda --- */
+.report-card {
+    background: white;
+    font-family: 'Arial', sans-serif !important;
+    font-weight: bold !important;
+    direction: rtl;
+    padding: 20px;
+    border: 2px solid black;
+}
+
+.grades-table, .summary-table, .student-info {
+    width: 100%;
+    border-collapse: collapse;
+    margin-bottom: 20px;
+    font-family: 'Arial', sans-serif !important;
+    font-weight: bold !important;
+}
+
+.grades-table th, .grades-table td, .summary-table td, .student-info td {
+    border: 1px solid black !important;
+    padding: 8px;
+    text-align: center;
+    font-family: 'Arial', sans-serif !important;
+    font-weight: bold !important;
+}
+
+.title-box {
+    text-align: center;
+    font-weight: bold !important;
+    font-family: 'Arial', sans-serif !important;
+    font-size: 20px;
+    margin-bottom: 5px;
+}
+
+/* --- 2. TALLAABADA MUHIIMKA AH: CSS-ka marka la PRINT garaynayo --- */
+@media print {
+    /* Hubi in farta Arial Bold aysan isbeddelin */
+    * {
+        -webkit-print-color-adjust: exact !important; /* Midabada iyo Bold-ka sax */
+        print-color-adjust: exact !important;
+        font-family: 'Arial', sans-serif !important;
+        font-weight: bold !important;
+    }
+
+    .report-card {
+        border: 2px solid black !important;
+        padding: 10mm !important;
+        width: 100% !important;
+    }
+
+    /* Ka saar wax kasta oo bannaanka ka ah kaarka (sida badhamada) */
+    .no-print {
+        display: none !important;
+    }
+
+    /* Hubi in border-ka miisku soo baxo */
+    table, th, td {
+        border: 1px solid black !important;
+    }
+}
+
+/* 1. Marka bogga la joogo (Shaashadda) */
+#resultsThead tr {
+    background-color: #333 !important; /* Midabka madow ee shaashadda */
+    color: white !important;
+    font-family: 'Arial', sans-serif !important;
+    font-weight: bold !important;
+}
+
+#resultsTbody tr td {
+    font-family: 'Arial', sans-serif !important;
+    font-weight: bold !important;
+    color: black;
+}
+
+/* 2. MARKA LA DAABACAAYO (Halkan ayaa muhiim ah) */
+@media print {
+    /* Ka saar madowga header-ka, ka dhig cawl aad u khafiif ah ama cadaan */
+    #resultsThead tr {
+        background-color: #f2f2f2 !important; /* Cawl khafiif ah */
+        color: black !important;             /* Qoraalka ka dhig madow */
+        -webkit-print-color-adjust: exact !important;
+        print-color-adjust: exact !important;
+    }
+
+    #resultsThead th {
+        border: 1px solid black !important;
+        color: black !important;
+        font-family: 'Arial', sans-serif !important;
+        font-weight: bold !important;
+        background-color: #f2f2f2 !important;
+    }
+
+    /* Hubi in dhamaan xogta kale ay tahay Arial Bold oo nadiif ah */
+    #resultsTbody td {
+        border: 1px solid black !important;
+        color: black !important;
+        background-color: white !important;
+        font-family: 'Arial', sans-serif !important;
+        font-weight: bold !important;
+    }
+
+    /* Meesha ka saar wixii shadow ama madow ah oo xogta qarinaya */
+    table {
+        box-shadow: none !important;
+        text-shadow: none !important;
+        border: 1px solid black !important;
+    }
+
+    /* Qari badhamada iyo qaybaha aan loo baahnayn marka la daabacayo */
+    .no-print, button, .input-group {
+        display: none !important;
+    }
+}
+
+.student-info { 
+    font-size: 40px !important; /* Waynaynta Magaca */
+}
+.grades-table { 
+    font-size: 34px !important; /* Waynaynta Maadooyinka & Dhibcaha */
+}
+.report-card {
+    border: 4px solid #000 !important; /* Adkaynta xubinta kaarka */
+}
+
+/* ================= EXAM ADMISSION CARD (بطاقة الامتحان) ================= */
+.admission-card {
+    width: clamp(300px, 92vw, 900px);
+    max-width: 100%;
+    background: #fff;
+    border: 3px solid #000;
+    border-radius: 0;
+    margin: 0 auto 30px auto;
+    padding: clamp(12px, 4vw, 25px);
+    direction: rtl;
+    font-family: 'Cairo', sans-serif;
+    position: relative;
+    box-sizing: border-box;
+}
+.admission-card .adm-header {
+    display: flex;
+    justify-content: center;
+    align-items: center;
+}
+.admission-card .adm-header .adm-logo {
+    width: 100%;
+    max-width: 100%;
+    height: auto;
+    max-height: clamp(90px, 22vw, 200px);
+    object-fit: contain;
+}
+.admission-card .adm-line {
+    height: 4px;
+    background: #000;
+    margin: clamp(10px, 3vw, 15px) 0 clamp(18px, 6vw, 35px) 0;
+}
+.admission-card .adm-title {
+    text-align: center;
+    font-weight: 900;
+    font-size: clamp(22px, 6vw, 42px);
+    margin: 0 0 clamp(18px, 6vw, 40px) 0;
+}
+.admission-card .adm-field {
+    display: flex;
+    flex-wrap: wrap;
+    align-items: center;
+    justify-content: flex-start;
+    margin: clamp(10px, 3vw, 22px) 0;
+    font-size: clamp(14px, 3.2vw, 28px);
+    font-weight: bold;
+}
+.admission-card .adm-field .adm-label { flex-shrink: 0; margin-left: clamp(6px, 1.6vw, 12px); }
+.admission-card .adm-field .adm-value {
+    flex: none;
+    border-bottom: 3px dotted #000;
+    padding: 0 6px 3px 6px;
+    min-height: 20px;
+    min-width: 60px;
+    font-weight: 700;
+    overflow: hidden;
+    max-width: 100%;
+    white-space: normal;
+    word-break: break-word;
+    color: #0d47a1;
+}
+.admission-card .adm-note {
+    text-align: center;
+    font-weight: 800;
+    font-size: clamp(13px, 2.5vw, 22px);
+    margin-top: clamp(18px, 5vw, 35px);
+}
+.admission-card .adm-seal {
+    margin-top: clamp(15px, 4vw, 30px);
+    display: flex;
+    justify-content: flex-start;
+    direction: ltr;
+}
+.admission-card .adm-seal img { width: clamp(70px, 12vw, 130px); height: clamp(70px, 12vw, 130px); object-fit: contain; }
+
+@media print {
+    .admission-card, .admission-card * {
+        font-family: 'Cairo', sans-serif !important;
+        -webkit-print-color-adjust: exact !important;
+        print-color-adjust: exact !important;
+    }
+    .admission-card {
+        page-break-inside: avoid;
+        border: 3px solid #000 !important;
+        box-shadow: none !important;
+        width: 100%;
+    }
+    .admission-card .adm-title {
+        font-weight: 900 !important;
+        letter-spacing: 1px;
+    }
+    .admission-card .adm-field,
+    .admission-card .adm-field .adm-label,
+    .admission-card .adm-field .adm-value {
+        font-weight: 800 !important;
+    }
+    .admission-card .adm-note {
+        font-weight: 800 !important;
+    }
+}
+
+    </style>
+</head>
+<body>
+<div id="login-screen" style="position: fixed; inset: 0; background: #0b132b; display: flex; align-items: center; justify-content: center; z-index: 2000;">
+    <div style="background: white; padding: 40px; border-radius: 15px; width: 100%; max-width: 400px; box-shadow: 0 10px 30px rgba(0,0,0,0.5); text-align: center;">
+        <h3 style="font-weight: bold; margin-bottom: 25px;">تسجيل الدخول</h3>
+        <input type="text" id="loginUser" class="form-control mb-3" placeholder="Username-kaaga">
+        <input type="password" id="loginPass" class="form-control mb-3" placeholder="Password-kaaga">
+        <button onclick="checkLogin()" class="btn btn-dark w-100 fw-bold py-2 mb-3">تسجيل الدخول</button>
+        
+        <button onclick="openStudentPortalFromLogin()" class="btn btn-primary w-100 fw-bold py-2" style="background-color: #0288d1; border: none;">
+            <i class="fas fa-user-graduate me-2"></i> بوابة الطلاب | Portal-ka Ardayda
+        </button>
+
+        <p id="loginError" class="text-danger mt-3 d-none">Username-ka ama Password-ka waa khalad!</p>
+    </div>
+</div>
+
+<nav id="sidebar">
+    <div class="sidebar-header">
+        <h5 class="mb-0 fw-bold">نظام الإدارة</h5>
+        <button class="btn text-white fs-4" id="dismiss">×</button>
+    </div>
+    <ul class="list-unstyled mt-2">
+        <li data-menu-key="dashboard"><a class="nav-link" onclick="showPage('dashboard')"><span><i class="fas fa-home ms-2"></i> لوحة التحكم</span></a></li>
+        
+        <li>
+            <div class="nav-link" onclick="toggleSub(this)">
+                <span><i class="fas fa-sliders-h ms-2 text-info"></i> Maamul Natiijada Ardayda</span>
+                <i class="fas fa-chevron-down"></i>
+            </div>
+            <ul class="submenu">
+                <li data-menu-key="admin-exam-visibility-section"><a onclick="showPage('admin-exam-visibility-section')">Aragtida Imtixaanada</a></li>
+                <li data-menu-key="restrict-student-results-section"><a onclick="showPage('restrict-student-results-section')">حظر نتائج الطلاب</a></li>
+            </ul>
+        </li>
+
+        <li data-menu-key="student-portal-section">
+            <a class="nav-link" onclick="showPage('student-portal-section')">
+                <span><i class="fas fa-search ms-2 text-warning"></i> Raadi Natiijadaada (Student)</span>
+            </a>
+        </li>
+
+        <li>
+            <div class="nav-link" onclick="toggleSub(this)">
+                <span><i class="fas fa-user-graduate ms-2"></i> الطلاب</span>
+                <i class="fas fa-chevron-down"></i>
+            </div>
+            <ul class="submenu">
+                <li data-menu-key="add-student"><a onclick="showPage('add-student')">إضافة طالب</a></li>
+                <li data-menu-key="view-students"><a onclick="showPage('view-students')">عرض الطلاب</a></li>
+            </ul>
+        </li>
+
+        <li>
+            <div class="nav-link" onclick="toggleSub(this)">
+                <span><i class="fas fa-school ms-2"></i> الفصول</span>
+                <i class="fas fa-chevron-down"></i>
+            </div>
+            <ul class="submenu">
+                <li data-menu-key="add-class"><a onclick="showPage('add-class')">إضافة فصل</a></li>
+                <li data-menu-key="view-classes"><a onclick="showPage('view-classes')">عرض الفصول</a></li>
+            </ul>
+        </li>
+
+        <li>
+            <div class="nav-link" onclick="toggleSub(this)">
+                <span><i class="fas fa-book ms-2"></i> المواد</span>
+                <i class="fas fa-chevron-down"></i>
+            </div>
+            <ul class="submenu">
+                <li data-menu-key="add-subject"><a onclick="showPage('add-subject')">إضافة مادة</a></li>
+                <li data-menu-key="view-subjects-list"><a onclick="showPage('view-subjects-list')">عرض المواد</a></li>
+            </ul>
+        </li>
+
+        <li>
+            <div class="nav-link" onclick="toggleSub(this)">
+                <span><i class="fas fa-calendar-check ms-2"></i> الحضور</span>
+                <i class="fas fa-chevron-down"></i>
+            </div>
+            <ul class="submenu">
+                <li data-menu-key="add-attendance"><a onclick="showPage('add-attendance')"> + تسجيل حضور جديد</a></li>
+                <li data-menu-key="view-attendance"><a onclick="showPage('view-attendance')">عرض الحضور</a></li>
+                <li data-menu-key="view-absent-list"><a onclick="showPage('view-absent-list')">قائمة الغياب</a></li>
+                <li data-menu-key="individual-absent-list"><a onclick="showPage('individual-absent-list')">تقرير غياب فردي</a></li>
+            </ul>
+        </li>
+
+        <li>
+            <div class="nav-link" onclick="toggleSub(this)">
+                <span><i class="fas fa-calendar-alt ms-2"></i> السنة الدراسية</span>
+                <i class="fas fa-chevron-down"></i>
+            </div>
+            <ul class="submenu">
+                <li data-menu-key="add-year-section"><a onclick="showPage('add-year-section')">إضافة سنة دراسية</a></li>
+                <li data-menu-key="view-years-section"><a onclick="showPage('view-years-section')">عرض السنوات الدراسية</a></li>
+            </ul>
+        </li>
+
+        <li>
+            <div class="nav-link" onclick="toggleSub(this)">
+                <span><i class="fas fa-file-signature ms-2"></i> الامتحانات</span>
+                <i class="fas fa-chevron-down"></i>
+            </div>
+            <ul class="submenu">
+                <li data-menu-key="add-exam-section"><a onclick="showPage('add-exam-section')">إضافة امتحان</a></li>
+                <li data-menu-key="view-exams-section"><a onclick="showPage('view-exams-section')">عرض الامتحانات</a></li>
+                <li data-menu-key="exam-admission-card-section"><a onclick="showPage('exam-admission-card-section')"><i class="fas fa-id-card me-1"></i> بطاقة الامتحان</a></li>
+            </ul>
+        </li>
+
+        <li>
+            <div class="nav-link" onclick="toggleSub(this)">
+                <span><i class="fas fa-poll-h ms-2"></i> النتائج</span>
+                <i class="fas fa-chevron-down"></i>
+            </div>
+            <ul class="submenu">
+                <li data-menu-key="add-result-section"><a onclick="showPage('add-result-section')">إضافة نتائج</a></li>
+                <li data-menu-key="view-results-section"><a onclick="showPage('view-results-section')">عرض النتائج</a></li>
+                <li class="nav-item" data-menu-key="view-result-cards-section">
+                    <a class="nav-link text-white" href="#" onclick="showPage('view-result-cards-section')">
+                        <i class="fas fa-id-card me-2"></i> عرض بطاقات النتائج 
+                    </a>
+                </li>
+            </ul>
+        </li>
+
+        <li>
+            <div class="nav-link" onclick="toggleSub(this)">
+                <span><i class="fas fa-id-card ms-2"></i> ملف الشخصي</span>
+                <i class="fas fa-chevron-down"></i>
+            </div>
+            <ul class="submenu">
+                <li data-menu-key="add-user"><a onclick="showPage('add-user')">إضافة مستخدم</a></li>
+                <li data-menu-key="view-users"><a onclick="showPage('view-users')">عرض المستخدم</a></li>
+                <li data-menu-key="restrict-user-subjects-section"><a onclick="showPage('restrict-user-subjects-section')">حظر المواد عن المستخدم</a></li>
+                <li data-menu-key="restrict-user-menu-section"><a onclick="showPage('restrict-user-menu-section')">حظر المنيو عن المستخدم</a></li>
+            </ul>
+        </li>
+    </ul>
+</nav>
+
+    <div class="overlay" id="overlay"></div>
+
+    <div id="content">
+        <nav class="navbar d-flex justify-content-between no-print">
+            <div class="d-flex align-items-center">
+                <button class="btn-menu" id="sidebarCollapse"><i class="fas fa-bars"></i></button>
+                <button class="btn-back ms-2 d-none" id="globalBackBtn" onclick="goBack()"><i class="fas fa-arrow-right"></i> عودة</button>
+            </div>
+            <span class="fw-bold text-dark">معهد التأصيل الفرع الثاني </span>
+        </nav>
+
+        <div class="container mt-4">
+            
+<div id="dashboard" class="page-content">
+    <div class="welcome-box mb-4 p-4 text-white">
+        <div class="d-flex align-items-center justify-content-between">
+            <div>
+                <h2 class="fw-bold text-white">مرحبا بك في لوحة التحكم الرئيسية 👋</h2>
+                <p class="mb-0 opacity-75" id="todayDateArabic"></p>
+            </div>
+            <i class="fas fa-school fa-3x opacity-50"></i>
+        </div>
+    </div>
+
+    <div class="row g-3">
+        <div class="col-md-3">
+            <div class="stat-card-static border-start border-primary border-5 bg-white p-3 shadow-sm">
+                <div class="d-flex justify-content-between align-items-center">
+                    <div>
+                        <small class="text-muted fw-bold">معلومات عن الطلاب</small>
+                        <h2 class="fw-bold mb-0" id="dashTotalStudents">0</h2>
+                    </div>
+                    <div class="icon-box bg-primary-light text-primary">
+                        <i class="fas fa-user-graduate"></i>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <div class="col-md-3">
+            <div class="stat-card-static border-start border-success border-5 bg-white p-3 shadow-sm">
+                <div class="d-flex justify-content-between align-items-center">
+                    <div>
+                        <small class="text-muted fw-bold">إجمالي الفصول</small>
+                        <h2 class="fw-bold mb-0" id="dashTotalClasses">0</h2>
+                    </div>
+                    <div class="icon-box bg-success-light text-success">
+                        <i class="fas fa-chalkboard"></i>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <div class="col-md-3">
+            <div class="stat-card-static border-start border-info border-5 bg-white p-3 shadow-sm">
+                <div class="d-flex justify-content-between align-items-center">
+                    <div>
+                        <small class="text-muted fw-bold">إجمالي المواد</small>
+                        <h2 class="fw-bold mb-0" id="dashTotalSubjects">0</h2>
+                    </div>
+                    <div class="icon-box bg-info-light text-info">
+                        <i class="fas fa-book"></i>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <div class="col-md-3">
+            <div class="stat-card-static border-start border-danger border-5 bg-white p-3 shadow-sm">
+                <div class="d-flex justify-content-between align-items-center">
+                    <div>
+                        <small class="text-muted fw-bold">إجمالي الغيابات</small>
+                        <h2 class="fw-bold mb-0" id="dashTotalAbsent">0</h2>
+                    </div>
+                    <div class="icon-box bg-danger-light text-danger">
+                        <i class="fas fa-user-times"></i>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+<div id="add-student" class="page-content d-none">
+    <div class="card p-4 col-lg-7 mx-auto">
+        <h4 class="mb-4 fw-bold" id="studentFormTitle">تسجيل طالب جديد</h4>
+        
+        <input type="hidden" id="studentId">
+        <label class="small fw-bold mb-1 text-muted">ID-ga Ardayga (Waa la beddeli karaa)</label>
+        <input type="number" id="customStudentId" class="form-control mb-3" placeholder="ID-ga Ardayda">
+        <input type="text" id="name" class="form-control mb-3" placeholder="الاسم الكامل">
+        <select id="classSelect" class="form-select mb-4"></select>
+        <button onclick="handleStudent()" class="btn-primary-custom mb-4" id="submitBtn">حفظ البيانات</button>
+        
+        <hr>
+        
+        <div class="mt-2 p-3 border rounded bg-light">
+            <h6 class="fw-bold mb-2 text-success"><i class="fas fa-file-excel me-2"></i> استيراد من Excel</h6>
+            <p class="small text-muted">Hubi in Excel-ka uu leeyahay labا column oo kala ah: <b>Name</b> iyo <b>Class</b></p>
+            <input type="file" id="excelFile" class="form-control mb-2" accept=".xlsx, .xls">
+            <button onclick="importFromExcel()" class="btn btn-success w-100 fw-bold">تحميل الطلاب</button>
+        </div>
+    </div>
+</div>
+
+<div id="view-students" class="page-content d-none">
+    <div class="card p-4">
+        <div class="d-flex justify-content-between mb-4 no-print">
+            <h4 class="fw-bold">قائمة الطلاب</h4>
+            <button class="btn btn-dark" onclick="window.print()"><i class="fas fa-print"></i> طباعة</button>
+        </div>
+        <div class="table-responsive">
+            <table class="table table-hover align-middle">
+                <thead>
+                    <tr><th>ID / الرقم</th><th>الاسم</th><th>الفصل</th><th class="text-center no-print">الإجراء</th></tr>
+                </thead>
+                <tbody id="studentTableBody"></tbody>
+            </table>
+        </div>
+    </div>
+</div>
+
+            <div id="add-class" class="page-content d-none">
+                <div class="card p-4 col-lg-6 mx-auto">
+                    <h4 class="mb-4 fw-bold" id="classFormTitle">إضافة فصل دراسي</h4>
+                    <input type="hidden" id="editClassId">
+                    <input type="text" id="classNameInput" class="form-control mb-3" placeholder="اسم الفصل">
+                    <button onclick="saveClass()" class="btn-primary-custom" id="saveClassBtn">حفظ</button>
+                </div>
+            </div>
+
+            <div id="view-classes" class="page-content d-none">
+                <div class="card p-4">
+                    <h4 class="fw-bold mb-4">الفصول المسجلة</h4>
+                    <div class="table-responsive">
+                        <table class="table table-hover align-middle">
+                            <thead><tr><th>No</th><th>اسم الفصل</th><th class="text-center no-print">الإجراء</th></tr></thead>
+                            <tbody id="classTableBody"></tbody>
+                        </table>
+                    </div>
+                </div>
+            </div>
+
+            <div id="add-subject" class="page-content d-none">
+                <div class="card p-4 col-lg-7 mx-auto">
+                    <h4 class="mb-4 fw-bold" id="subjectFormTitle">إضافة مادة دراسية</h4>
+                    <input type="hidden" id="editSubjectId">
+                    <input type="text" id="subjectNameInput" class="form-control mb-3" placeholder="اسم المادة">
+                    <select id="subjectClassSelect" class="form-select mb-4"></select>
+                    <button onclick="saveSubject()" class="btn-primary-custom">حفظ المادة</button>
+                </div>
+            </div>
+
+            <div id="view-subjects-list" class="page-content d-none">
+                <div class="card p-4">
+                    <h4 class="mb-4 fw-bold">عرض المواد حسب الفصل</h4>
+                    <div class="table-responsive">
+                        <table class="table table-hover align-middle">
+                            <thead><tr><th>No</th><th>اسم الفصل</th><th class="text-center">عرض</th></tr></thead>
+                            <tbody id="subjectClassesTbody"></tbody>
+                        </table>
+                    </div>
+                </div>
+            </div>
+
+            <div id="view-subjects-detail" class="page-content d-none">
+                <div class="card p-4">
+                    <h4 class="fw-bold mb-4">مواد فصل: <span id="currentClassTitle"></span></h4>
+                    <div class="table-responsive">
+                        <table class="table table-hover align-middle">
+                            <thead><tr><th>No</th><th>المادة</th><th class="text-center no-print">الإجراء</th></tr></thead>
+                            <tbody id="classSubjectsTbody"></tbody>
+                        </table>
+                    </div>
+                </div>
+            </div>
+
+<div id="add-attendance" class="page-content d-none">
+    <div class="card p-4">
+        <h4 class="mb-4 fw-bold text-primary">تسجيل حضور جديد</h4>
+        <div class="row g-3 mb-4">
+            <div class="col-md-3"><label>اختر التاريخ</label><input type="date" id="attDate" class="form-control"></div>
+            <div class="col-md-3"><label>اختر الفصل</label><select id="attClassSelect" class="form-select" onchange="loadAttSubjects(this.value); hideAttTable();"></select></div>
+            <div class="col-md-3"><label>اختر المادة</label><select id="attSubSelect" class="form-select" onchange="hideAttTable()"></select></div>
+             <div class="col-md-3">
+                            <div class="form-check form-switch bg-light p-2 rounded border d-flex align-items-center justify-content-between px-3">
+                                <label class="form-check-label fw-bold small mb-0" for="toggleShowAbsent">إظهار في قائمة الغياب</label>
+                                <input class="form-check-input" type="checkbox" id="toggleShowAbsent" checked>
+                            </div>
+                        </div>
+            <div class="col-md-3"><label>&nbsp;</label><button class="btn btn-dark w-100 fw-bold" onclick="fetchAttStudents()">بحث عن الطلاب</button></div>
+        </div>
+
+        <div id="attendanceResultArea" class="d-none">
+            <div class="table-responsive">
+                <table class="table table-bordered align-middle text-center">
+                    <thead class="table-dark">
+                        <tr><th>الرقم</th><th>اسم الطالب</th><th class="text-center">الحالة (✓ / X)</th></tr>
+                    </thead>
+                    <tbody id="attTbody"></tbody>
+                </table>
+            </div>
+            <button onclick="saveAttendanceRecord()" class="btn-primary-custom mt-3">حشف الحضور</button>
+        </div>
+    </div>
+</div>
+
+            <div id="view-attendance" class="page-content d-none">
+                <div class="card p-4">
+                    <h4 class="fw-bold mb-4">اختر الفصل لعرض السجل</h4>
+                    <div class="row" id="classAttendanceGrid"></div>
+                </div>
+            </div>
+
+            <div id="view-class-logs" class="page-content d-none">
+                <div class="filter-box mb-4 no-print">
+                    <h5 class="fw-bold mb-3 text-primary">سجلات فصل: <span id="logClassName"></span></h5>
+                    <div class="row g-3 align-items-end">
+                        <div class="col-md-4"><label class="small fw-bold">من تاريخ</label><input type="date" id="filterFromDate" class="form-control"></div>
+                        <div class="col-md-4"><label class="small fw-bold">إلى تاريخ</label><input type="date" id="filterToDate" class="form-control"></div>
+                        <div class="col-md-4"><button class="btn btn-dark w-100" onclick="filterLogs()">تطبيق التصفية</button></div>
+                    </div>
+                </div>
+                <div class="card p-0">
+                    <div class="table-responsive">
+                        <table class="table table-hover align-middle mb-0 text-center">
+                            <thead class="table-dark"><tr><th>No</th><th>التاريخ</th><th>المادة</th><th class="text-center">إجراء</th></tr></thead>
+                            <tbody id="logsTableBody"></tbody>
+                        </table>
+                    </div>
+                </div>
+            </div>
+
+            <div id="view-attendance-details" class="page-content d-none">
+                <div class="card p-4">
+                    <div class="d-flex justify-content-between align-items-start border-bottom pb-3 mb-4">
+                        <div>
+                            <h4 class="fw-bold mb-1">تقرير الحضور التفصيلي</h4>
+                            <p class="mb-0 text-muted">الفصل: <b id="detClass" class="text-dark"></b><br>  المادة: <b id="detSub" class="text-dark"></b><br>  التاريخ: <b id="detDate" class="text-dark"></b><br></p>
+                        </div>
+                        <button class="btn btn-outline-dark no-print" onclick="window.print()"><i class="fas fa-print"></i> طباعة</button>
+                    </div>
+                    <div class="table-responsive">
+                        <table class="table table-striped align-middle text-center">
+                            <thead><tr><th>الرقم</th><th>اسم الطالب</th><th>الحالة</th><th class="text-center no-print">تحديث</th></tr></thead>
+                            <tbody id="detailsTableBody"></tbody>
+                        </table>
+                    </div>
+                </div>
+            </div>
+
+            <div id="view-absent-list" class="page-content d-none">
+                <div class="filter-box mb-4 no-print">
+                    <h5 class="fw-bold mb-3 text-danger"><i class="fas fa-user-times ms-2"></i> لوحة تصفية الغائبين</h5>
+                    <div class="row g-3 align-items-end">
+                        <div class="col-md-3"><label class="small fw-bold">من تاريخ</label><input type="date" id="absFromDate" class="form-control"></div>
+                        <div class="col-md-3"><label class="small fw-bold">إلى تاريخ</label><input type="date" id="absToDate" class="form-control"></div>
+                        <div class="col-md-3"><label class="small fw-bold">اختيار الفصل</label><select id="absClassSelect" class="form-select"></select></div>
+                        <div class="col-md-3"><button class="btn btn-dark w-100" onclick="runAbsentFilter()">بحث</button></div>
+                    </div>
+                </div>
+                <div class="card p-0">
+                    <div class="table-responsive">
+                        <table class="table table-hover align-middle mb-0 text-center">
+                            <thead class="table-danger">
+                                <tr><th>الرقم</th><th>اسم الطالب</th><th>الفصل</th><th>التاريخ</th><th>اليوم</th><th>الوقت</th><th>عدد المرات</th><th>إجراء</th></tr>
+                            </thead>
+                            <tbody id="absentListTbody"></tbody>
+                        </table>
+                    </div>
+                    <button class="btn btn-outline-dark no-print m-3" onclick="window.print()"><i class="fas fa-print"></i> طباعة</button>
+                </div>
+            </div>
+
+            <div id="individual-absent-list" class="page-content d-none">
+                <div class="card p-4 mb-4 no-print">
+                    <h5 class="fw-bold mb-3">تقرير متابعة غياب طالب محدد</h5>
+                    <div class="row g-3">
+                        <div class="col-md-3">
+                            <label class="small fw-bold">اختر الفصل</label>
+                            <select id="indClassSelect" class="form-select" onchange="loadIndStudents(this.value)">
+                                <option value="">-- اختر الفصل --</option>
+                            </select>
+                        </div>
+                        <div class="col-md-3">
+                            <label class="small fw-bold">اختر الطالب</label>
+                            <select id="indStudentSelect" class="form-select">
+                                <option value="">-- اختر الطالب --</option>
+                            </select>
+                        </div>
+                        <div class="col-md-2">
+                            <label class="small fw-bold">من تاريخ</label>
+                            <input type="date" id="indFromDate" class="form-control">
+                        </div>
+                        <div class="col-md-2">
+                            <label class="small fw-bold">إلى تاريخ</label>
+                            <input type="date" id="indToDate" class="form-control">
+                        </div>
+                        <div class="col-md-2">
+                            <label>&nbsp;</label>
+                            <button class="btn btn-dark w-100 fw-bold" onclick="searchIndividualAbsent()">عرض التقرير</button>
+                        </div>
+                    </div>
+                </div>
+
+                <div id="indAbsentResult" class="d-none">
+                    <div class="report-card">
+                        <div class="report-header">
+                            <div class="d-flex justify-content-between align-items-center mb-3">
+                                <div>
+                                    <h3 class="fw-bold mb-1">معهد التأصيل الفرع الثاني</h3>
+                                    <p class="text-muted mb-0">بطاقة متابعة الغياب</p>
+                                </div>
+                                <button class="btn btn-outline-dark no-print" onclick="window.print()"><i class="fas fa-print ms-1"></i> طباعة</button>
+                            </div>
+                            <hr>
+                            <div class="row mt-3">
+                                <div class="col-md-4 report-stat-box">
+                                    <small class="text-muted d-block">اسم الطالب</small>
+                                    <span class="fw-bold fs-5" id="indStudentLabel">---</span>
+                                </div>
+                                <div class="col-md-4 report-stat-box">
+                                    <small class="text-muted d-block">الفصل</small>
+                                    <span class="fw-bold fs-5" id="indClassLabel">---</span>
+                                </div>
+                                <div class="col-md-4 report-stat-box text-danger border-0">
+                                    <small class="text-muted d-block">إجمالي أيام الغياب</small>
+                                    <span class="fw-bold fs-5" id="indTotalCount">0</span>
+                                </div>
+                            </div>
+                        </div>
+                        <div class="table-responsive">
+                            <table class="table table-striped align-middle mb-0 text-center">
+                                <thead class="table-dark">
+                                    <tr><th>التاريخ</th><th>اليوم</th><th>الوقت</th><th>المادة</th><th>الحالة</th></tr>
+                                </thead>
+                                <tbody id="indAbsentTbody"></tbody>
+                            </table>
+                        </div>
+                    </div>
+                </div>
+            </div>
+<div id="add-year-section" class="page-content d-none">
+    <div class="card p-4 col-lg-7 mx-auto shadow-sm">
+        <h4 class="mb-4 fw-bold text-primary">إضافة سنة دراسية جديدة</h4>
+        <div class="mb-3">
+            <label class="form-label fw-bold">اسم السنة (مثال: 2024-2025)</label>
+            <input type="text" id="yearNameInput" class="form-control" placeholder="2024-2025">
+        </div>
+        <button class="btn-primary-custom" onclick="saveAcademicYear()">حفظ السنة</button>
+    </div>
+</div>
+
+<div id="view-years-section" class="page-content d-none">
+    <div class="card p-4 shadow-sm">
+        <div class="d-flex justify-content-between align-items-center mb-4">
+            <h4 class="fw-bold mb-0">السنوات الدراسية المسجلة</h4>
+            <button class="btn btn-dark btn-sm" onclick="window.print()"><i class="fas fa-print me-1"></i> طباعة القائمة</button>
+        </div>
+        <div class="table-responsive">
+            <table class="table table-hover align-middle border text-center">
+                <thead class="table-dark">
+                    <tr><th>#</th><th>السنة الدراسية</th><th class="no-print">الإجراءات</th></tr>
+                </thead>
+                <tbody id="yearsTableBody"></tbody>
+                <input type="hidden" id="editYearId">
+            </table>
+        </div>
+    </div>
+</div>
+
+<div id="add-exam-section" class="page-content d-none">
+    <div class="card p-4 col-lg-7 mx-auto shadow-sm">
+        <h4 class="mb-4 fw-bold text-primary">إضافة امتحان جديد</h4>
+        <div class="row g-3">
+            <div class="col-md-6">
+                <label class="form-label fw-bold">نوع الامتحان</label>
+                <select id="examTypeInput" class="form-select">
+                    <option value="نصفي">نصفي (Midterm)</option>
+                    <option value="نهائي">نهائي (Final)</option>
+                    <option value="شهري 1">شهري 1 (Monthly 1)</option>
+                    <option value="شهري 2">شهري 2 (Monthly 2)</option>
+                </select>
+            </div>
+            <div class="col-md-6">
+                <label class="form-label fw-bold">السنة الدراسية</label>
+                <select id="examYearSelect" class="form-select"></select>
+            </div>
+        </div>
+        <button class="btn-primary-custom mt-4" onclick="saveExam()">حفظ الامتحان</button>
+    </div>
+</div>
+
+<div id="view-exams-section" class="page-content d-none">
+    <input type="hidden" id="editExamId">
+    <div class="card p-4 shadow-sm">
+        <div class="d-flex justify-content-between align-items-center mb-4">
+            <h4 class="fw-bold mb-0">قائمة الامتحانات</h4>
+            <button class="btn btn-dark btn-sm" onclick="window.print()"><i class="fas fa-print me-1"></i> طباعة</button>
+        </div>
+        <div class="table-responsive">
+            <table class="table table-hover align-middle border text-center">
+                <thead class="table-dark">
+                    <tr><th>#</th><th>اسم الامتحان</th><th>السنة الدراسية</th><th class="no-print">الإجراءات</th></tr>
+                </thead>
+                <tbody id="examsTableBody"></tbody>
+            </table>
+        </div>
+    </div>
+</div>
+
+<div id="add-result-section" class="page-content d-none">
+    <div class="card p-4 shadow-sm">
+        <h4 class="mb-4 fw-bold text-primary">إضافة نتائج الامتحانات</h4>
+        <div class="row g-3 mb-4">
+            <div class="col-md-3">
+                <label class="small fw-bold">السنة الدراسية</label>
+                <select id="resYear" class="form-select" onchange="filterExamsByYear(this.value)"></select>
+            </div>
+            <div class="col-md-3">
+                <label class="small fw-bold">الامتحان</label>
+                <select id="resExam" class="form-select">
+                    <option value="">-- اختر الامتحان --</option>
+                </select>
+            </div>
+            <div class="col-md-2">
+                <label class="small fw-bold">الفصل</label>
+                <select id="resClass" class="form-select" onchange="filterSubjectsByClass(this.value)"></select>
+            </div>
+            <div class="col-md-2">
+                <label class="small fw-bold">المادة</label>
+                <select id="resSubject" class="form-select">
+                    <option value="">-- اختر المادة --</option>
+                </select>
+            </div>
+            <div class="col-md-2">
+                <label>&nbsp;</label>
+                <button class="btn btn-dark w-100 fw-bold" onclick="fetchStudentsForResult()">بحث</button>
+            </div>
+        </div>
+
+        <div id="resultEntryArea" class="d-none">
+    <div id="resClearControl" class="d-flex justify-content-end mb-2"></div>
+    <div class="table-responsive">
+        <table class="table table-bordered align-middle text-center">
+            <thead class="table-dark">
+                <tr>
+                    <th>الرقم</th>
+                    <th>اسم الطالب</th>
+                    <th style="width: 150px;">الدرجة</th>
+                </tr>
+            </thead>
+            <tbody id="resTbody"></tbody>
+        </table>
+    </div>
+    <button onclick="saveStudentsResults()" class="btn-primary-custom mt-3">حفظ جميع النتائج</button>
+</div>
+    </div>
+</div>
+
+<div id="view-results-section" class="page-content d-none">
+    <div class="card p-4 shadow-sm">
+        <div class="d-flex justify-content-between align-items-center mb-4 no-print">
+            <h4 class="fw-bold text-primary">عرض قائمة النتائج </h4>
+            <div>
+                <button class="btn btn-success btn-sm me-2" onclick="exportToExcel('resultsTable')">
+                    <i class="fas fa-file-excel me-1"></i> Excel
+                </button>
+                <button class="btn btn-danger btn-sm" onclick="window.print()">
+                    <i class="fas fa-print me-1"></i> Print
+                </button>
+                <button id="deleteAllBtn" class="btn btn-danger btn-sm me-2 d-none" onclick="bulkClearSubjectMarks()">
+                    <i class="fas fa-eraser me-1"></i> Clear Marks
+                </button>
+            </div>
+        </div>
+
+<div class="row g-2 mb-4 no-print" dir="rtl"> 
+    <div class="col-md-3">
+        <label class="small fw-bold">السنة الدراسية</label>
+        <select id="viewResYear" class="form-select" onchange="filterExamsForView(this.value)">
+            <option value="">-- اختر السنة --</option>
+        </select>
+    </div>
+    <div class="col-md-3">
+        <label class="small fw-bold">الامتحان</label>
+        <select id="viewResExam" class="form-select">
+            <option value="">-- اختر الامتحان --</option>
+        </select>
+    </div>
+    <div class="col-md-2">
+        <label class="small fw-bold">الفصل</label>
+        <select id="viewResClass" class="form-select" onchange="filterSubjectsForView(this.value)">
+            <option value="">-- اختر الفصل --</option>
+        </select>
+    </div>
+    <div class="col-md-2">
+        <label class="small fw-bold">المادة</label>
+        <select id="viewResSubject" class="form-select">
+            <option value="All">جميع المواد</option>
+        </select>
+    </div>
+    <div class="col-md-2">
+        <label>&nbsp;</label>
+        <button class="btn btn-dark w-100 fw-bold" onclick="generateResultReport()">
+            <i class="fas fa-search me-1"></i> بحث
+        </button>
+    </div>
+</div>
+
+        <div id="reportHeaderInfo" class="text-center mb-4 d-none">
+            <h2 class="fw-bold">معهد التأصيل (الفرع الثاني)</h2>
+            <h4 id="displayInfoText" class="text-muted"></h4>
+            <hr>
+        </div>
+
+        <div class="table-responsive">
+            <table class="table table-bordered align-middle text-center" id="resultsTable">
+                <thead id="resultsThead" class="table-dark"></thead>
+                <tbody id="resultsTbody"></tbody>
+            </table>
+        </div>
+    </div>
+</div>
+
+<div id="view-result-cards-section" class="page-content d-none" dir="rtl">
+    <div class="card p-4 shadow-sm text-end">
+        <h4 class="fw-bold text-primary mb-4 no-print">بطاقة نتائج الطلاب (Result Cards)</h4>
+        
+        <div class="row g-2 mb-4 no-print">
+            <div class="col-md-3">
+                <label class="small fw-bold">السنة الدراسية</label>
+                <select id="cardYear" class="form-select text-end" onchange="filterExamsForCards(this.value)"></select>
+            </div>
+            <div class="col-md-2">
+                <label class="small fw-bold">الفصل</label>
+                <select id="cardClass" class="form-select text-end" onchange="filterStudentsForCards(this.value)"></select>
+            </div>
+            <div class="col-md-3">
+                <label class="small fw-bold">الطالب</label>
+                <select id="cardStudent" class="form-select text-end">
+                    <option value="All">جميع الطلاب (All)</option>
+                </select>
+            </div>
+            <div class="col-md-2">
+                <label class="small fw-bold">الامتحان</label>
+                <select id="cardExam" class="form-select text-end">
+                    <option value="All">جميع الامتحانات (All)</option>
+                </select>
+            </div>
+            <div class="col-md-2">
+                <label>&nbsp;</label>
+                <button class="btn btn-dark w-100 fw-bold" onclick="generateResultCards()">بحث</button>
+            </div>
+        </div>
+
+        <div id="resultCardsContainer"></div>
+    </div>
+</div>
+
+<!-- NEW SECTION: EXAM ADMISSION CARD (بطاقة الامتحان) -->
+<div id="exam-admission-card-section" class="page-content d-none" dir="rtl">
+    <div class="card p-4 shadow-sm text-end">
+        <h4 class="fw-bold text-primary mb-4 no-print"><i class="fas fa-id-card me-2"></i> بطاقة الامتحان (Exam Admission Card)</h4>
+
+        <div class="row g-2 mb-4 no-print">
+            <div class="col-md-3">
+                <label class="small fw-bold">الفصل</label>
+                <select id="admCardClass" class="form-select text-end" onchange="filterStudentsForAdmCard(this.value)">
+                    <option value="">-- اختر الفصل --</option>
+                </select>
+            </div>
+            <div class="col-md-4">
+                <label class="small fw-bold">الامتحان</label>
+                <select id="admCardExam" class="form-select text-end">
+                    <option value="">-- اختر الامتحان --</option>
+                </select>
+            </div>
+            <div class="col-md-3">
+                <label class="small fw-bold">الطالب</label>
+                <select id="admCardStudent" class="form-select text-end">
+                    <option value="All">جميع الطلاب (All)</option>
+                </select>
+            </div>
+            <div class="col-md-2">
+                <label>&nbsp;</label>
+                <button class="btn btn-dark w-100 fw-bold" onclick="generateAdmissionCards()">إنشاء البطاقة</button>
+            </div>
+        </div>
+
+        <div id="admissionCardsContainer"></div>
+    </div>
+</div>
+
+
+<div id="admin-exam-visibility-section" class="page-content d-none" dir="rtl">
+    <div class="card p-4 shadow-sm col-lg-8 mx-auto text-end">
+        <h4 class="fw-bold text-primary mb-4"><i class="fas fa-sliders-h me-2"></i> Maamul qaabka ardaydu u arkaan Natiijada</h4>
+        <p class="text-muted small">Halkan ka dooro fasalka iyo imtixaanada aad rabto in ardaydu si toos ah uga raadsan karaan portal-ka. Waxaad fasal keliya u ogolaan kartaa dhowr imtixaan.</p>
+        
+        <div class="row g-3 mb-4">
+            <div class="col-md-4">
+                <label class="small fw-bold mb-1">Dooro Fasalka:</label>
+                <select id="visibilityClassSelect" class="form-select" onchange="loadExamsForVisibility()"></select>
+            </div>
+            <div class="col-md-5">
+                <label class="small fw-bold mb-1">Xaddid Imtixaanka la arkayo:</label>
+                <select id="visibilityExamSelect" class="form-select">
+                    <option value="All">Dhammaan Imtixaanada (All Exams)</option>
+                </select>
+            </div>
+            <div class="col-md-3">
+                <label>&nbsp;</label>
+                <button class="btn btn-success w-100 fw-bold" onclick="saveExamVisibilitySettings()">
+                    <i class="fas fa-save me-1"></i> Codso Sharciga
+                </button>
+            </div>
+        </div>
+
+        <div class="table-responsive mt-3">
+            <table class="table table-bordered text-center align-middle">
+                <thead class="table-dark">
+                    <tr>
+                        <th>Fasalka</th>
+                        <th>Imtixaanada Loo Ogolaaday</th>
+                        <th>Action</th>
+                    </tr>
+                </thead>
+                <tbody id="visibilitySettingsTbody">
+                    <tr><td colspan="3" class="text-muted">Ma jiro sharci la dhigay wali.</td></tr>
+                </tbody>
+            </table>
+        </div>
+    </div>
+</div>
+
+<!-- NEW SECTION: RESTRICT STUDENT RESULTS -->
+<div id="restrict-student-results-section" class="page-content d-none" dir="rtl">
+    <div class="card p-4 shadow-sm col-lg-8 mx-auto text-end">
+        <h4 class="fw-bold text-danger mb-4"><i class="fas fa-eye-slash me-2"></i> حظر نتائج الطلاب (Xayiraadda Natiijada)</h4>
+        <p class="text-muted small">Dooro fasalka si aad u maamusho ardayda laga rabo in laga qariyo natiijada portal-ka.</p>
+        
+        <div class="row g-3 mb-4">
+            <div class="col-md-6">
+                <label class="small fw-bold mb-1">اختر الفصل (Dooro Fasalka):</label>
+                <select id="restrictClassSelect" class="form-select" onchange="loadStudentsForRestriction(this.value)">
+                    <option value="">-- اختر الفصل --</option>
+                </select>
+            </div>
+        </div>
+
+        <div class="table-responsive mt-3">
+            <table class="table table-bordered text-center align-middle">
+                <thead class="table-dark">
+                    <tr>
+                        <th>الرقم (No)</th>
+                        <th>اسم الطالب (Student Name)</th>
+                        <th>الإجراء (Action 👁)</th>
+                    </tr>
+                </thead>
+                <tbody id="restrictStudentsTbody">
+                    <tr><td colspan="3" class="text-muted">Fadlan marka hore dooro fasal kor ku xusan.</td></tr>
+                </tbody>
+            </table>
+        </div>
+    </div>
+</div>
+
+<!-- NEW SECTION: RESTRICT USER SUBJECTS (Per-User, Per-Class Subject Block) -->
+<div id="restrict-user-subjects-section" class="page-content d-none" dir="rtl">
+    <div class="card p-4 shadow-sm col-lg-8 mx-auto text-end">
+        <h4 class="fw-bold text-danger mb-4"><i class="fas fa-user-lock me-2"></i> Xayiraada Maadooyinka ee User-ka (Per-User Subject Block)</h4>
+        <p class="text-muted small">Qofka halkan laga xayirayo waa <b>Users-ka/Musta5damiinta</b> ee kaydsan qaybta "المستخدمين" — ma aha ardayda. 1) Dooro User-ka. 2) Dooro Fasalka. 3) Maadooyinka fasalkaas ayaa soo bixi doona — taabo icon-ka il-ka (👁) si aad maado kasta u xidho ama u furto. <b>Fiiro gaar ah:</b> xayiraaddu waa mid <u>gaar u ah fasalka la doortay</u> — haddii maado la magac wadaagto laga xayiro fasal, fasallada kale ee maadadaas lagu sameeyay lama xayirin.</p>
+        <div class="row g-3 align-items-end mb-3">
+            <div class="col-md-6">
+                <label class="small fw-bold mb-1">Dooro User-ka (Musta5damiinta):</label>
+                <select id="restrictUserSelect" class="form-select" onchange="onRestrictUserOrClassChanged()">
+                    <option value="">-- Dooro User-ka --</option>
+                </select>
+            </div>
+            <div class="col-md-6">
+                <label class="small fw-bold mb-1">Dooro Fasalka:</label>
+                <select id="restrictUserClassSelect" class="form-select" onchange="onRestrictUserOrClassChanged()">
+                    <option value="">-- Dooro Fasalka --</option>
+                </select>
+            </div>
+        </div>
+
+        <div class="table-responsive mt-3">
+            <table class="table table-bordered text-center align-middle">
+                <thead class="table-dark">
+                    <tr>
+                        <th>الرقم (No)</th>
+                        <th>المادة (Subjects)</th>
+                        <th>الإجراء (Action 👁)</th>
+                    </tr>
+                </thead>
+                <tbody id="restrictUserSubjectsListTbody">
+                    <tr><td colspan="3" class="text-muted">Fadlan marka hore dooro User-ka iyo Fasalka kor ku xusan.</td></tr>
+                </tbody>
+            </table>
+        </div>
+
+        <div class="table-responsive mt-4">
+            <table class="table table-bordered text-center align-middle">
+                <thead class="table-dark">
+                    <tr>
+                        <th>User-ka (Musta5damaha)</th>
+                        <th>Fasalka</th>
+                        <th>Maadooyinka Laga Xayiray</th>
+                    </tr>
+                </thead>
+                <tbody id="restrictUserSubjectsTbody">
+                    <tr><td colspan="3" class="text-muted">Ma jiro wax xayiraad ah oo la dhigay wali.</td></tr>
+                </tbody>
+            </table>
+        </div>
+
+        <hr class="my-4">
+
+        <h5 class="fw-bold text-danger mb-3"><i class="fas fa-file-signature me-2"></i> Xayir Imtixaan Gaar ah oo User Gaar ah (Per-User Exam Block)</h5>
+        <p class="text-muted small">1) Dooro User-ka. 2) Dooro Fasalka. 3) Dooro Sanadka Dugsiga (Academic Year). 4) Imtixaanada sanadkaas ayaa soo bixi doona — taabo icon-ka il-ka (👁) si aad imtixaan kasta u xidho ama u furto user-kaas. <b>Fiiro gaar ah:</b> xayiraaddu waa mid <u>gaar u ah Fasalka la doortay</u> — haddii aad imtixaan uga xayirto Fasalka 5, Fasallada kale (Fasalka 6, iwm) wax kama beddelmayaan.</p>
+        <div class="row g-3 align-items-end mb-3">
+            <div class="col-md-4">
+                <label class="small fw-bold mb-1">Dooro User-ka (Musta5damiinta):</label>
+                <select id="restrictExamUserSelect" class="form-select" onchange="onRestrictUserOrYearChanged()">
+                    <option value="">-- Dooro User-ka --</option>
+                </select>
+            </div>
+            <div class="col-md-4">
+                <label class="small fw-bold mb-1">Dooro Fasalka:</label>
+                <select id="restrictExamClassSelect" class="form-select" onchange="onRestrictUserOrYearChanged()">
+                    <option value="">-- Dooro Fasalka --</option>
+                </select>
+            </div>
+            <div class="col-md-4">
+                <label class="small fw-bold mb-1">Dooro Sanadka Dugsiga:</label>
+                <select id="restrictExamYearSelect" class="form-select" onchange="onRestrictUserOrYearChanged()">
+                    <option value="">-- Dooro Sanadka --</option>
+                </select>
+            </div>
+        </div>
+
+        <div class="table-responsive mt-3">
+            <table class="table table-bordered text-center align-middle">
+                <thead class="table-dark">
+                    <tr>
+                        <th>الرقم (No)</th>
+                        <th>الامتحانات (Exams)</th>
+                        <th>الإجراء (Action 👁)</th>
+                    </tr>
+                </thead>
+                <tbody id="restrictUserExamsListTbody">
+                    <tr><td colspan="3" class="text-muted">Fadlan marka hore dooro User-ka, Fasalka iyo Sanadka kor ku xusan.</td></tr>
+                </tbody>
+            </table>
+        </div>
+
+        <div class="table-responsive mt-4">
+            <table class="table table-bordered text-center align-middle">
+                <thead class="table-dark">
+                    <tr>
+                        <th>User-ka (Musta5damaha)</th>
+                        <th>Fasalka</th>
+                        <th>Imtixaanada Laga Xayiray</th>
+                    </tr>
+                </thead>
+                <tbody id="restrictUserExamsTbody">
+                    <tr><td colspan="3" class="text-muted">Ma jiro wax xayiraad ah oo la dhigay wali.</td></tr>
+                </tbody>
+            </table>
+        </div>
+
+    </div>
+</div>
+
+<!-- NEW SECTION: RESTRICT USER MENU/SUBMENU ACCESS -->
+<div id="restrict-user-menu-section" class="page-content d-none" dir="rtl">
+    <div class="card p-4 shadow-sm col-lg-8 mx-auto text-end">
+        <h4 class="fw-bold text-danger mb-4"><i class="fas fa-bars me-2"></i> Xayiraada Menu-ga ee User-ka (Per-User Menu/Submenu Block)</h4>
+        <p class="text-muted small">Qofka halkan laga xayirayo waa <b>Users-ka/Musta5damiinta</b> ee kaydsan qaybta "المستخدمين" — ma aha ardayda. 1) Dooro User-ka. 2) Dhammaan menu-yada iyo submenu-yada sidebar-ka ayaa soo bixi doona — taabo icon-ka il-ka (👁) si aad qayb kasta u xidho ama u furto user-kaas. Qaybaha la xidho <b>kama muuqan doonaan sidebar-ka</b> marka user-kaas uu galo (login).</p>
+
+        <div class="row g-3 mb-3">
+            <div class="col-md-8">
+                <label class="small fw-bold mb-1">Dooro User-ka (Musta5damiinta):</label>
+                <select id="restrictMenuUserSelect" class="form-select" onchange="onRestrictMenuUserChanged()">
+                    <option value="">-- Dooro User-ka --</option>
+                </select>
+            </div>
+        </div>
+
+        <div class="table-responsive mt-3">
+            <table class="table table-bordered text-center align-middle">
+                <thead class="table-dark">
+                    <tr>
+                        <th>الرقم (No)</th>
+                        <th>القائمة/القائمة الفرعية (Menu/Submenu)</th>
+                        <th>الإجراء (Action 👁)</th>
+                    </tr>
+                </thead>
+                <tbody id="restrictUserMenuListTbody">
+                    <tr><td colspan="3" class="text-muted">Fadlan marka hore dooro User-ka kor ku xusan.</td></tr>
+                </tbody>
+            </table>
+        </div>
+
+        <div class="table-responsive mt-4">
+            <table class="table table-bordered text-center align-middle">
+                <thead class="table-dark">
+                    <tr>
+                        <th>User-ka (Musta5damaha)</th>
+                        <th>Menu-yada/Submenu-yada Laga Xayiray</th>
+                    </tr>
+                </thead>
+                <tbody id="restrictUserMenuTbody">
+                    <tr><td colspan="2" class="text-muted">Ma jiro wax xayiraad ah oo la dhigay wali.</td></tr>
+                </tbody>
+            </table>
+        </div>
+
+    </div>
+</div>
+
+<!-- STUDENT PORTAL SECTION -->
+<div id="student-portal-section" class="page-content d-none" dir="rtl">  
+    <div class="card p-3 p-md-4 shadow-lg border-0 col-lg-9 mx-auto text-end" style="border-radius: 15px; background: #ffffff;">  
+        <h4 class="fw-bold text-primary mb-4 no-print text-center" style="font-family: 'Cairo', sans-serif;">  
+            <i class="fas fa-graduation-cap me-2 text-warning"></i> Portal-ka Natiijada Ardayda (Student Portal)  
+        </h4>  
+        <div class="row g-2 mb-4 no-print align-items-end justify-content-center">  
+            <div class="col-md-8">  
+                <label class="small fw-bold mb-2 text-muted">Fadlan qor ID-gaaga (Tusaale: 2526):</label>  
+                <div class="input-group">  
+                    <span class="input-group-text bg-light"><i class="fas fa-id-card text-muted"></i></span>  
+                    <input type="number" id="searchStudentIdInp" class="form-control text-center fw-bold fs-5 bg-light" placeholder="Qor ID-gaaga halkan...">  
+                </div>  
+            </div>  
+            <div class="col-md-3">  
+                <button class="btn btn-primary w-100 fw-bold py-2 shadow-sm" onclick="checkStudentResultByID()" style="background-color: #0b132b; border: none; height: 48px;">  
+                    <i class="fas fa-search me-1"></i> Arag Natiijada  
+                </button>  
+            </div>  
+        </div>  
+
+        <div id="studentPortalResultArea" class="d-none mt-3">  
+            <hr class="no-print mb-4">  
+            <div class="table-responsive" style="overflow-x: auto; width: 100%; -webkit-overflow-scrolling: touch;">  
+                <div id="spCardsContainer" style="min-width: 600px; margin: 0 auto; padding: 5px;"></div>  
+            </div>  
+            <div class="text-start mt-4 no-print">  
+                <button class="btn btn-dark shadow-sm px-4 py-2" onclick="window.print()" style="border-radius: 6px;">  
+                    <i class="fas fa-print me-1"></i> Daabaco Kaarka rasmiga ah  
+                </button>  
+            </div>  
+        </div>  
+    </div>
+</div>
+
+        </div>
+        <div id="add-user" class="page-content d-none">
+    <div class="card p-4 col-lg-6 mx-auto">
+        <h4 class="mb-4 fw-bold">إضافة مستخدم جديد </h4>
+        <div class="mb-3">
+            <label class="form-label">اسم المستخدم</label>
+            <input type="text" id="newUsername" class="form-control" placeholder="Qor Username-ka">
+        </div>
+        <div class="mb-3">
+            <label class="form-label">كلمة المرور</label>
+            <input type="password" id="newPassword" class="form-control" placeholder="Qor Password-ka">
+        </div>
+        <button onclick="saveNewUser()" class="btn-primary-custom">حفظ</button>
+    </div>
+</div>
+
+<div id="view-users" class="page-content d-none">
+    <div class="card p-4">
+        <div class="d-flex justify-content-between align-items-center mb-4">
+            <h4 class="fw-bold">قائمة المستخدمين </h4>
+            <button class="btn btn-sm btn-dark" onclick="showPage('add-user')">
+                <i class="fas fa-plus me-1"></i> إضافة مستخدم جديد
+            </button>
+        </div>
+        
+        <div class="table-responsive">
+            <table class="table table-hover align-middle border">
+                <thead class="table-light">
+                    <tr>
+                        <th>اسم المستخدم</th>
+                        <th>كلمة المرور</th>
+                        <th class="text-center">الإجراء</th>
+                    </tr>
+                </thead>
+                <tbody id="usersTableBody"></tbody>
+            </table>
+        </div>
+    </div>
+</div>
+
+    </div>
+
+    <script type="module">
+        import { initializeApp } from "https://www.gstatic.com/firebasejs/12.10.0/firebase-app.js";
+        import { getDatabase, ref, set, push, onValue, remove, update } from "https://www.gstatic.com/firebasejs/12.10.0/firebase-database.js";
+
+        const firebaseConfig = { apiKey: "AIzaSyAE0ahywyZLsZ4psRm2u1cCEMciTjx_qgs", authDomain: "absent-b.firebaseapp.com", projectId: "absent-b", databaseURL: "https://absent-b-default-rtdb.firebaseio.com", appId: "1:45759222162:web:540e1a27ddac1f2fcc314b" };
+        const app = initializeApp(firebaseConfig);
+        const db = getDatabase(app);
+
+        let stack = ['dashboard'];
+        let activeClassForLogs = "";
+        let allStudents = [], allSubjects = [], allAttendance = [], classesList = [];
+        let allExams = []; 
+        let globalVisibilityData = {}; 
+        let hiddenStudentsList = {}; 
+        let blockedSubjectsList = {}; // { userId: { className: { subjectName: true, ... } } } -- userId waa Firebase key-ga 'system_users'
+        let blockedExamsList = {}; // { userId: { className: { examId: true, ... } } }
+        let blockedMenusList = {}; // { userId: { menuKey: true, ... } } -- menuKey waa isla id-ga bogga (page-content)
+
+        // Liiska buuxa ee dhammaan Menu-yada iyo Submenu-yada sidebar-ka (waa la isku mid yahay data-menu-key ee HTML-ka)
+        const MENU_REGISTRY = [
+            { key: 'dashboard', label: 'لوحة التحكم' },
+            { key: 'admin-exam-visibility-section', label: 'Maamul Natiijada Ardayda ← Aragtida Imtixaanada' },
+            { key: 'restrict-student-results-section', label: 'Maamul Natiijada Ardayda ← حظر نتائج الطلاب' },
+            { key: 'student-portal-section', label: 'Raadi Natiijadaada (Student)' },
+            { key: 'add-student', label: 'الطلاب ← إضافة طالب' },
+            { key: 'view-students', label: 'الطلاب ← عرض الطلاب' },
+            { key: 'add-class', label: 'الفصول ← إضافة فصل' },
+            { key: 'view-classes', label: 'الفصول ← عرض الفصول' },
+            { key: 'add-subject', label: 'المواد ← إضافة مادة' },
+            { key: 'view-subjects-list', label: 'المواد ← عرض المواد' },
+            { key: 'add-attendance', label: 'الحضور ← تسجيل حضور جديد' },
+            { key: 'view-attendance', label: 'الحضور ← عرض الحضور' },
+            { key: 'view-absent-list', label: 'الحضور ← قائمة الغياب' },
+            { key: 'individual-absent-list', label: 'الحضور ← تقرير غياب فردي' },
+            { key: 'add-year-section', label: 'السنة الدراسية ← إضافة سنة دراسية' },
+            { key: 'view-years-section', label: 'السنة الدراسية ← عرض السنوات الدراسية' },
+            { key: 'add-exam-section', label: 'الامتحانات ← إضافة امتحان' },
+            { key: 'view-exams-section', label: 'الامتحانات ← عرض الامتحانات' },
+            { key: 'add-result-section', label: 'النتائج ← إضافة نتائج' },
+            { key: 'view-results-section', label: 'النتائج ← عرض النتائج' },
+            { key: 'view-result-cards-section', label: 'النتائج ← عرض بطاقات النتائج' },
+            { key: 'add-user', label: 'ملف الشخصي ← إضافة مستخدم' },
+            { key: 'view-users', label: 'ملف الشخصي ← عرض المستخدم' },
+            { key: 'restrict-user-subjects-section', label: 'ملف الشخصي ← حظر المواد عن المستخدم' },
+            { key: 'restrict-user-menu-section', label: 'ملف الشخصي ← حظر المنيو عن المستخدم' },
+        ];
+        let allSystemUsers = []; // { id, username, password } kaydsan 'system_users' (qaybta "المستخدمين")
+        let allAcademicYears = []; // { id, year } kaydsan 'academic_years'
+        let currentLoggedInUserId = null; // haddii admin/123 la geliyay ama arday, waa null (full access)
+
+        window.showPage = (id) => {
+            // Xayiraadda Menu-ga: haddii user-ka (non-admin) currently login-gareeyay uu ka xayiran yahay bogga id-gan, diid inuu galo
+            const blockedMenusForCurrentUser = (currentLoggedInUserId && blockedMenusList[currentLoggedInUserId]) || {};
+            if (blockedMenusForCurrentUser[id] === true) {
+                alert("Ma lihid ogolaanshaha aad u gasho boggan. Fadlan la xiriir Admin-ka.");
+                return;
+            }
+
+            if (stack[stack.length - 1] !== id) stack.push(id);
+            document.querySelectorAll('.page-content').forEach(p => p.classList.add('d-none'));
+            document.getElementById(id).classList.remove('d-none');
+            document.getElementById('globalBackBtn').classList.toggle('d-none', id === 'dashboard');
+            
+            if(id === 'view-attendance') renderAttendanceClasses();
+            if(id === 'admin-exam-visibility-section') listenToVisibilitySettings();
+            if(id === 'add-student') calculateNextStudentID();
+            if(id === 'restrict-student-results-section') {
+                const rSelect = document.getElementById('restrictClassSelect');
+                if(rSelect) { loadStudentsForRestriction(rSelect.value); }
+            }
+            if(id === 'restrict-user-subjects-section') {
+                populateAllUsersForRestrictSelect();
+                onRestrictUserOrClassChanged();
+                onRestrictUserOrYearChanged();
+            }
+            if(id === 'restrict-user-menu-section') {
+                populateAllUsersForRestrictSelect();
+                onRestrictMenuUserChanged();
+            }
+            if(window.innerWidth < 992) { sidebar.classList.remove('active'); overlay.classList.remove('active'); }
+        };
+
+        window.goBack = () => { if(stack.length > 1) { stack.pop(); showPage(stack.pop()); } };
+
+        const sidebar = document.getElementById('sidebar');
+        const overlay = document.getElementById('overlay');
+        document.getElementById('sidebarCollapse').onclick = () => { sidebar.classList.add('active'); overlay.classList.add('active'); };
+        document.getElementById('dismiss').onclick = () => { sidebar.classList.remove('active'); overlay.classList.remove('active'); };
+        document.getElementById('overlay').onclick = function() {
+            sidebar.classList.remove('active'); 
+            this.classList.remove('active');    
+        };
+        window.toggleSub = (el) => {
+            const sub = el.nextElementSibling;
+            const isVisible = sub.style.display === 'block';
+            document.querySelectorAll('.submenu').forEach(s => s.style.display = 'none');
+            sub.style.display = isVisible ? 'none' : 'block';
+        };
+
+        function renderStudentsTable() {
+            const t = document.getElementById('studentTableBody'); 
+            if(!t) return;
+            t.innerHTML = ''; 
+            
+            allStudents.forEach((s, idx) => {
+                let displayID = s.studentCustomId ? s.studentCustomId : s.id;
+                
+                const isHidden = hiddenStudentsList[s.id] === true;
+                const eyeIcon = isHidden ? 'fa-eye-slash text-secondary' : 'fa-eye text-success';
+                const titleText = isHidden ? 'Muuqashada waa xirantahay (Guji si aad u furto)' : 'Waa muuqdaa (Guji si aad u qariso)';
+
+                t.innerHTML += `<tr>
+                    <td><strong>${displayID}</strong></td> 
+                    <td>${s.name}</td>
+                    <td>${s.class}</td>
+                    <td class="text-center no-print">
+                        <button onclick="toggleStudentVisibility('${s.id}')" class="btn btn-sm ms-1" title="${titleText}"><i class="fas ${eyeIcon}"></i></button>
+                        <button onclick="editStudent('${s.id}','${s.name}','${s.class}','${s.studentCustomId}')" class="btn btn-sm text-primary"><i class="fas fa-edit"></i></button>
+                        <button onclick="deleteData('students/${s.id}')" class="btn btn-sm text-danger ms-1"><i class="fas fa-trash"></i></button>
+                    </td>
+                </tr>`;
+            });
+        }
+
+        onValue(ref(db, 'hidden_students'), (snap) => {
+            hiddenStudentsList = snap.exists() ? snap.val() : {};
+            renderStudentsTable();
+            refreshDashboardTotals();
+            const rSelect = document.getElementById('restrictClassSelect');
+            if(rSelect) { loadStudentsForRestriction(rSelect.value); }
+        });
+
+        onValue(ref(db, 'blocked_subjects'), (snap) => {
+            blockedSubjectsList = snap.exists() ? snap.val() : {};
+            const rSelect = document.getElementById('restrictClassSelect');
+            if(rSelect) { loadStudentsForRestriction(rSelect.value); }
+            renderUserSubjectBlocksTable();
+        });
+
+        onValue(ref(db, 'blocked_exams'), (snap) => {
+            blockedExamsList = snap.exists() ? snap.val() : {};
+            renderUserExamBlocksTable();
+        });
+
+        onValue(ref(db, 'blocked_menus'), (snap) => {
+            blockedMenusList = snap.exists() ? snap.val() : {};
+            renderUserMenuBlocksTable();
+            if (typeof applyMenuRestrictionsForCurrentUser === 'function') applyMenuRestrictionsForCurrentUser();
+        });
+
+        onValue(ref(db, 'classes'), (snap) => {
+            const sels = ['classSelect', 'subjectClassSelect', 'attClassSelect', 'absClassSelect', 'indClassSelect',
+           'resClass', 'viewResClass', 'cardClass', 'admCardClass', 'visibilityClassSelect', 'restrictClassSelect', 'restrictUserClassSelect', 'restrictExamClassSelect'];
+            const tClass = document.getElementById('classTableBody');
+            const tSubMain = document.getElementById('subjectClassesTbody');
+            classesList = [];
+            sels.forEach(id => { 
+                const el = document.getElementById(id);
+                if(el) el.innerHTML = (id === 'absClassSelect') ? '<option value="All">جميع الفصول</option>' : '<option value="">-- اختر الفصل --</option>';
+            });
+            if(tClass) tClass.innerHTML = ''; if(tSubMain) tSubMain.innerHTML = '';
+            let i = 1;
+            snap.forEach(child => {
+                const n = child.val().className;
+                classesList.push(n);
+                sels.forEach(id => { if(document.getElementById(id)) document.getElementById(id).innerHTML += `<option value="${n}">${n}</option>`; });
+                if(tClass) tClass.innerHTML += `<tr><td>${i}</td><td>${n}</td><td class="text-center no-print"><button onclick="editClass('${child.key}','${n}')" class="btn btn-sm text-primary"><i class="fas fa-edit"></i></button><button onclick="deleteData('classes/${child.key}')" class="btn btn-sm text-danger ms-1"><i class="fas fa-trash"></i></button></td></tr>`;
+                if(tSubMain) tSubMain.innerHTML += `<tr><td>${i}</td><td>${n}</td><td class="text-center"><button onclick="viewSubjectsDetail('${n}')" class="btn btn-sm btn-dark">عرض المواد</button></td></tr>`;
+                i++;
+            });
+            refreshDashboardTotals();
+        });
+
+        onValue(ref(db, 'students'), (snap) => {
+            allStudents = [];
+            snap.forEach(child => {
+                const s = child.val(); 
+                s.id = child.key; 
+                allStudents.push(s);
+            });
+            renderStudentsTable();
+            refreshDashboardTotals();
+            calculateNextStudentID();
+            const rSelect = document.getElementById('restrictClassSelect');
+            if(rSelect) { loadStudentsForRestriction(rSelect.value); }
+        });
+
+        window.toggleStudentVisibility = (studentId) => {
+            const currentStatus = hiddenStudentsList[studentId] === true;
+            if (currentStatus) {
+                remove(ref(db, 'hidden_students/' + studentId));
+            } else {
+                set(ref(db, 'hidden_students/' + studentId), true);
+            }
+        };
+
+        window.loadStudentsForRestriction = (cls) => {
+            const tbody = document.getElementById('restrictStudentsTbody');
+            if(!tbody) return;
+
+            if(!cls) {
+                tbody.innerHTML = '<tr><td colspan="3" class="text-muted">Fadlan marka hore dooro fasal kor ku xusan.</td></tr>';
+                return;
+            }
+
+            const filtered = allStudents.filter(s => s.class === cls);
+
+            if(filtered.length === 0) {
+                tbody.innerHTML = '<tr><td colspan="3" class="text-muted">Fasalkan wax arday ah kama diwaan gashna.</td></tr>';
+                return;
+            }
+            tbody.innerHTML = '';
+            filtered.forEach((s, idx) => {
+                const isHidden = hiddenStudentsList[s.id] === true;
+                const eyeIcon = isHidden ? 'fa-eye-slash text-danger' : 'fa-eye text-success';
+                const btnClass = isHidden ? 'btn-outline-danger' : 'btn-outline-success';
+
+                tbody.innerHTML += `<tr>
+                    <td>${idx + 1}</td>
+                    <td class="fw-bold">${s.name}</td>
+                    <td>
+                        <button onclick="toggleStudentVisibility('${s.id}')" class="btn btn-sm ${btnClass} px-3">
+                            <i class="fas ${eyeIcon}"></i>
+                        </button>
+                    </td>
+                </tr>`;
+            });
+        };
+
+        // Buuxi dropdown-ka "Dooro User-ka" isagoo si toos ah u soo saaraya DHAMMAAN
+        // Users-ka/Musta5damiinta kaydsan (Firebase 'system_users' node — qaybta "المستخدمين" ee sidebar-ka).
+        // QOFKA HALKAN LAGA XAYIRAYO WAA USER-KA, MA AHA ARDAYGA.
+        window.populateAllUsersForRestrictSelect = () => {
+            const fillUserSelect = (elId) => {
+                const sel = document.getElementById(elId);
+                if(!sel) return;
+                const previousValue = sel.value;
+                sel.innerHTML = '<option value="">-- Dooro User-ka --</option>';
+                allSystemUsers.forEach(u => {
+                    sel.innerHTML += `<option value="${u.id}">${u.username}</option>`;
+                });
+                if (previousValue && allSystemUsers.some(u => u.id === previousValue)) {
+                    sel.value = previousValue;
+                }
+            };
+
+            fillUserSelect('restrictUserSelect');
+            fillUserSelect('restrictExamUserSelect');
+            fillUserSelect('restrictMenuUserSelect');
+
+            renderUserSubjectBlocksTable();
+            renderUserExamBlocksTable();
+            renderUserMenuBlocksTable();
+        };
+
+        // Marka User-ka AMA Fasalka la doorto/badalo: Maadooyinka fasalkaas ayaa loo soo bandhigaa
+        // jaantus leh il (eye) toggle -- guji si aad si degdeg ah maado u xidho ama u furto user-kaas.
+        window.onRestrictUserOrClassChanged = () => {
+            const userId = document.getElementById('restrictUserSelect').value;
+            const cls = document.getElementById('restrictUserClassSelect').value;
+            const tbody = document.getElementById('restrictUserSubjectsListTbody');
+            if(!tbody) return;
+
+            if(!userId || !cls) {
+                tbody.innerHTML = '<tr><td colspan="3" class="text-muted">Fadlan marka hore dooro User-ka iyo Fasalka kor ku xusan.</td></tr>';
+                return;
+            }
+
+            const clsSubjects = allSubjects.filter(sub => sub.className === cls);
+            if(clsSubjects.length === 0) {
+                tbody.innerHTML = '<tr><td colspan="3" class="text-muted">Fasalkan wax maado ah kama diwaan gashna.</td></tr>';
+                return;
+            }
+
+            // XOG-KAYDINTA WAA GAAR U TAHAY FASALKA (Per-Class): blockedSubjectsList[userId][className][subjectName]
+            const blockedForUserClass = (blockedSubjectsList[userId] && blockedSubjectsList[userId][cls]) || {};
+            tbody.innerHTML = '';
+            clsSubjects.forEach((sub, idx) => {
+                const isBlocked = blockedForUserClass[sub.name] === true;
+                const eyeIcon = isBlocked ? 'fa-eye-slash text-danger' : 'fa-eye text-success';
+                const btnClass = isBlocked ? 'btn-outline-danger' : 'btn-outline-success';
+                const titleText = isBlocked ? 'Waa la xidhay (Guji si aad u furto)' : 'Waa furan tahay (Guji si aad u xidho)';
+                tbody.innerHTML += `<tr>
+                    <td>${idx + 1}</td>
+                    <td class="fw-bold">${sub.name}</td>
+                    <td>
+                        <button onclick="toggleUserSubjectBlock('${userId}','${cls}','${sub.name}')" class="btn btn-sm ${btnClass} px-3" title="${titleText}">
+                            <i class="fas ${eyeIcon}"></i>
+                        </button>
+                    </td>
+                </tr>`;
+            });
+        };
+
+        // Toggle-ka asaasiga ah: hadii maadadu furan tahay -> waa la xidhaa (block), hadii ay xidhan tahay -> waa la furaa (unblock)
+        // Xayiraaddu waa MID GAAR U AH FASALKA la doortay (Per-Class), si maadooyin isku magac ah oo fasallo kale ku jira aysan u xayirmin.
+        window.toggleUserSubjectBlock = (userId, cls, subjectName) => {
+            const isBlocked = !!(blockedSubjectsList[userId] && blockedSubjectsList[userId][cls] && blockedSubjectsList[userId][cls][subjectName] === true);
+            if (isBlocked) {
+                remove(ref(db, 'blocked_subjects/' + userId + '/' + cls + '/' + subjectName));
+            } else {
+                set(ref(db, 'blocked_subjects/' + userId + '/' + cls + '/' + subjectName), true);
+            }
+        };
+
+        window.removeStudentSubjectBlock = (userId, cls, subjectName) => {
+            remove(ref(db, 'blocked_subjects/' + userId + '/' + cls + '/' + subjectName));
+        };
+
+        // Jaantuska hoose ee tusaya user kasta, fasalkiisa, iyo maadooyinka laga xayiray isaga fasalkaas
+        window.renderUserSubjectBlocksTable = () => {
+            const tbody = document.getElementById('restrictUserSubjectsTbody');
+            if(!tbody) return;
+
+            let rows = [];
+            Object.keys(blockedSubjectsList).forEach(uid => {
+                const clsMap = blockedSubjectsList[uid] || {};
+                Object.keys(clsMap).forEach(cls => {
+                    const subjectsForUserClass = clsMap[cls] || {};
+                    if (Object.keys(subjectsForUserClass).length > 0) {
+                        rows.push({ uid, cls, subjectsForUserClass });
+                    }
+                });
+            });
+
+            if(rows.length === 0) {
+                tbody.innerHTML = '<tr><td colspan="3" class="text-muted">Ma jiro wax xayiraad ah oo la dhigay wali.</td></tr>';
+                return;
+            }
+
+            tbody.innerHTML = '';
+            rows.forEach(({ uid, cls, subjectsForUserClass }) => {
+                const matchUser = allSystemUsers.find(u => u.id === uid);
+                const uname = matchUser ? matchUser.username : `(User la tirtiray: ${uid})`;
+                const chipsHtml = Object.keys(subjectsForUserClass).map(subName =>
+                    `<span class="badge bg-danger me-1 mb-1" style="cursor:pointer;" title="Guji si aad u furto" onclick="removeStudentSubjectBlock('${uid}','${cls}','${subName}')">${subName} <i class="fas fa-times ms-1"></i></span>`
+                ).join('');
+                tbody.innerHTML += `<tr>
+                    <td class="fw-bold">${uname}</td>
+                    <td>${cls}</td>
+                    <td>${chipsHtml}</td>
+                </tr>`;
+            });
+
+            // Cusboonaysii jaantuska il-ka (eye) haddii User/Fasal la doortay hore
+            if (typeof onRestrictUserOrClassChanged === 'function') onRestrictUserOrClassChanged();
+        };
+
+        // ===== XAYIRAADA IMTIXAANADA (Per-User, Per-Class Exam Block) =====
+
+        window.onRestrictUserOrYearChanged = () => {
+            const userId = document.getElementById('restrictExamUserSelect').value;
+            const cls = document.getElementById('restrictExamClassSelect').value;
+            const year = document.getElementById('restrictExamYearSelect').value;
+            const tbody = document.getElementById('restrictUserExamsListTbody');
+            if(!tbody) return;
+
+            if(!userId || !cls || !year) {
+                tbody.innerHTML = '<tr><td colspan="3" class="text-muted">Fadlan marka hore dooro User-ka, Fasalka iyo Sanadka kor ku xusan.</td></tr>';
+                return;
+            }
+
+            const yearExams = allExams.filter(e => e.year === year);
+            if(yearExams.length === 0) {
+                tbody.innerHTML = '<tr><td colspan="3" class="text-muted">Sanadkan wax imtixaan ah kama diwaan gashna.</td></tr>';
+                return;
+            }
+
+            // XOG-KAYDINTA WAA GAAR U TAHAY FASALKA (Per-Class): blockedExamsList[userId][className][examId]
+            const blockedForUserClass = (blockedExamsList[userId] && blockedExamsList[userId][cls]) || {};
+            tbody.innerHTML = '';
+            yearExams.forEach((exam, idx) => {
+                const isBlocked = blockedForUserClass[exam.id] === true;
+                const eyeIcon = isBlocked ? 'fa-eye-slash text-danger' : 'fa-eye text-success';
+                const btnClass = isBlocked ? 'btn-outline-danger' : 'btn-outline-success';
+                const titleText = isBlocked ? 'Waa la xidhay (Guji si aad u furto)' : 'Waa furan tahay (Guji si aad u xidho)';
+                tbody.innerHTML += `<tr>
+                    <td>${idx + 1}</td>
+                    <td class="fw-bold">${exam.examName}</td>
+                    <td>
+                        <button onclick="toggleUserExamBlock('${userId}','${cls}','${exam.id}')" class="btn btn-sm ${btnClass} px-3" title="${titleText}">
+                            <i class="fas ${eyeIcon}"></i>
+                        </button>
+                    </td>
+                </tr>`;
+            });
+        };
+
+        // Toggle-ka asaasiga ah ee imtixaanada: hadii imtixaanku furan yahay -> waa la xidhaa, hadii uu xidhan yahay -> waa la furaa
+        window.toggleUserExamBlock = (userId, cls, examId) => {
+            const isBlocked = !!(blockedExamsList[userId] && blockedExamsList[userId][cls] && blockedExamsList[userId][cls][examId] === true);
+            if (isBlocked) {
+                remove(ref(db, 'blocked_exams/' + userId + '/' + cls + '/' + examId));
+            } else {
+                set(ref(db, 'blocked_exams/' + userId + '/' + cls + '/' + examId), true);
+            }
+        };
+
+        window.removeUserExamBlock = (userId, cls, examId) => {
+            remove(ref(db, 'blocked_exams/' + userId + '/' + cls + '/' + examId));
+        };
+
+        // Jaantuska hoose ee tusaya user kasta, fasalkiisa, iyo imtixaanada laga xayiray isaga fasalkaas
+        window.renderUserExamBlocksTable = () => {
+            const tbody = document.getElementById('restrictUserExamsTbody');
+            if(!tbody) return;
+
+            let rows = [];
+            Object.keys(blockedExamsList).forEach(uid => {
+                const clsMap = blockedExamsList[uid] || {};
+                Object.keys(clsMap).forEach(cls => {
+                    const examsForUserClass = clsMap[cls] || {};
+                    if (Object.keys(examsForUserClass).length > 0) {
+                        rows.push({ uid, cls, examsForUserClass });
+                    }
+                });
+            });
+
+            if(rows.length === 0) {
+                tbody.innerHTML = '<tr><td colspan="3" class="text-muted">Ma jiro wax xayiraad ah oo la dhigay wali.</td></tr>';
+            } else {
+                tbody.innerHTML = '';
+                rows.forEach(({ uid, cls, examsForUserClass }) => {
+                    const matchUser = allSystemUsers.find(u => u.id === uid);
+                    const uname = matchUser ? matchUser.username : `(User la tirtiray: ${uid})`;
+                    const chipsHtml = Object.keys(examsForUserClass).map(examId => {
+                        const matchExam = allExams.find(e => e.id === examId);
+                        const examLabel = matchExam ? matchExam.examName : `(Imtixaan la tirtiray)`;
+                        return `<span class="badge bg-danger me-1 mb-1" style="cursor:pointer;" title="Guji si aad u furto" onclick="removeUserExamBlock('${uid}','${cls}','${examId}')">${examLabel} <i class="fas fa-times ms-1"></i></span>`;
+                    }).join('');
+                    tbody.innerHTML += `<tr>
+                        <td class="fw-bold">${uname}</td>
+                        <td>${cls}</td>
+                        <td>${chipsHtml}</td>
+                    </tr>`;
+                });
+            }
+
+            // Cusboonaysii jaantuska il-ka (eye) haddii User/Fasal/Sanad la doortay hore
+            if (typeof onRestrictUserOrYearChanged === 'function') onRestrictUserOrYearChanged();
+        };
+
+        // ===== XAYIRAADA MENU-GA/SUBMENU-GA (Per-User Sidebar Menu Block) =====
+
+        // Marka User-ka la doorto: dhammaan Menu-yada/Submenu-yada (MENU_REGISTRY) ayaa loo soo bandhigaa
+        // jaantus leh il (eye) toggle -- guji si aad si degdeg ah qayb u xidho ama u furto user-kaas.
+        window.onRestrictMenuUserChanged = () => {
+            const userId = document.getElementById('restrictMenuUserSelect').value;
+            const tbody = document.getElementById('restrictUserMenuListTbody');
+            if(!tbody) return;
+
+            if(!userId) {
+                tbody.innerHTML = '<tr><td colspan="3" class="text-muted">Fadlan marka hore dooro User-ka kor ku xusan.</td></tr>';
+                return;
+            }
+
+            const blockedForUser = blockedMenusList[userId] || {};
+            tbody.innerHTML = '';
+            MENU_REGISTRY.forEach((item, idx) => {
+                const isBlocked = blockedForUser[item.key] === true;
+                const eyeIcon = isBlocked ? 'fa-eye-slash text-danger' : 'fa-eye text-success';
+                const btnClass = isBlocked ? 'btn-outline-danger' : 'btn-outline-success';
+                const titleText = isBlocked ? 'Waa la xidhay (Guji si aad u furto)' : 'Waa furan tahay (Guji si aad u xidho)';
+                tbody.innerHTML += `<tr>
+                    <td>${idx + 1}</td>
+                    <td class="fw-bold">${item.label}</td>
+                    <td>
+                        <button onclick="toggleUserMenuBlock('${userId}','${item.key}')" class="btn btn-sm ${btnClass} px-3" title="${titleText}">
+                            <i class="fas ${eyeIcon}"></i>
+                        </button>
+                    </td>
+                </tr>`;
+            });
+        };
+
+        // Toggle-ka asaasiga ah: hadii menu-gu furan yahay -> waa la xidhaa (block), hadii uu xidhan yahay -> waa la furaa (unblock)
+        window.toggleUserMenuBlock = (userId, menuKey) => {
+            const isBlocked = !!(blockedMenusList[userId] && blockedMenusList[userId][menuKey] === true);
+            if (isBlocked) {
+                remove(ref(db, 'blocked_menus/' + userId + '/' + menuKey));
+            } else {
+                set(ref(db, 'blocked_menus/' + userId + '/' + menuKey), true);
+            }
+        };
+
+        window.removeUserMenuBlock = (userId, menuKey) => {
+            remove(ref(db, 'blocked_menus/' + userId + '/' + menuKey));
+        };
+
+        // Jaantuska hoose ee tusaya user kasta iyo menu-yada/submenu-yada laga xayiray isaga
+        window.renderUserMenuBlocksTable = () => {
+            const tbody = document.getElementById('restrictUserMenuTbody');
+            if(!tbody) return;
+            const userIdsWithBlocks = Object.keys(blockedMenusList).filter(uid => Object.keys(blockedMenusList[uid] || {}).length > 0);
+
+            if(userIdsWithBlocks.length === 0) {
+                tbody.innerHTML = '<tr><td colspan="2" class="text-muted">Ma jiro wax xayiraad ah oo la dhigay wali.</td></tr>';
+            } else {
+                tbody.innerHTML = '';
+                userIdsWithBlocks.forEach(uid => {
+                    const matchUser = allSystemUsers.find(u => u.id === uid);
+                    const uname = matchUser ? matchUser.username : `(User la tirtiray: ${uid})`;
+                    const menusForUser = blockedMenusList[uid] || {};
+                    const chipsHtml = Object.keys(menusForUser).map(menuKey => {
+                        const matchItem = MENU_REGISTRY.find(m => m.key === menuKey);
+                        const menuLabel = matchItem ? matchItem.label : menuKey;
+                        return `<span class="badge bg-danger me-1 mb-1" style="cursor:pointer;" title="Guji si aad u furto" onclick="removeUserMenuBlock('${uid}','${menuKey}')">${menuLabel} <i class="fas fa-times ms-1"></i></span>`;
+                    }).join('');
+                    tbody.innerHTML += `<tr>
+                        <td class="fw-bold">${uname}</td>
+                        <td>${chipsHtml}</td>
+                    </tr>`;
+                });
+            }
+
+            // Cusboonaysii jaantuska il-ka (eye) haddii User la doortay hore
+            if (typeof onRestrictMenuUserChanged === 'function') onRestrictMenuUserChanged();
+        };
+
+        // FULINTA XAYIRAADDA: qari (d-none) sidebar-ka qaybaha loo xayiray user-ka currently login-gareeyay.
+        // Haddii admin/123 la geliyay (currentLoggedInUserId === null) DHAMMAAN qaybaha waa la soo bandhigaa (full access).
+        window.applyMenuRestrictionsForCurrentUser = () => {
+            const blockedForCurrentUser = (currentLoggedInUserId && blockedMenusList[currentLoggedInUserId]) || {};
+
+            // 1) Qari (d-none) submenu-yada gaarka ah ee loo xayiray user-kan
+            document.querySelectorAll('#sidebar li[data-menu-key]').forEach(li => {
+                const key = li.getAttribute('data-menu-key');
+                li.classList.toggle('d-none', blockedForCurrentUser[key] === true);
+            });
+
+            // 2) Haddii Menu-ga waalidka ah (parent) uu leeyahay submenu, oo DHAMMAAN submenu-yadiisa
+            //    hadda xidhan yihiin (d-none), Menu-ga waalidka ah sidoo kale waa la qariyaa —
+            //    sababtoo ah ma jirto sabab loo muujiyo Menu aan lahayn wax submenu ah oo furan.
+            document.querySelectorAll('#sidebar > ul.list-unstyled > li').forEach(parentLi => {
+                const submenu = parentLi.querySelector(':scope > ul.submenu');
+                if (!submenu) return; // Menu-yada gaarka ah (sida Dashboard) ma laha submenu, waa la boodaa
+                const children = submenu.querySelectorAll(':scope > li');
+                if (children.length === 0) return;
+                const allChildrenHidden = Array.from(children).every(c => c.classList.contains('d-none'));
+                parentLi.classList.toggle('d-none', allChildrenHidden);
+            });
+        };
+
+        onValue(ref(db, 'subjects'), (snap) => {
+            allSubjects = [];
+            snap.forEach(child => { allSubjects.push({...child.val(), id: child.key}); });
+            refreshDashboardTotals();
+            const rSelect = document.getElementById('restrictClassSelect');
+            if(rSelect) { loadStudentsForRestriction(rSelect.value); }
+        });
+
+        onValue(ref(db, 'attendance'), (snap) => {
+            allAttendance = [];
+            snap.forEach(child => { allAttendance.push({...child.val(), key: child.key}); });
+            refreshDashboardTotals();
+        });
+
+window.importFromExcel = () => {
+    const fileInput = document.getElementById('excelFile');
+    const file = fileInput.files[0];
+
+    if (!file) {
+        return alert("Fadlan marka hore dooro faylka Excel-ka!");
+    }
+
+    const reader = new FileReader();
+    reader.onload = (e) => {
+        const data = new Uint8Array(e.target.result);
+        const workbook = XLSX.read(data, { type: 'array' });
+        
+        const firstSheetName = workbook.SheetNames[0];
+        const worksheet = workbook.Sheets[firstSheetName];
+        const jsonData = XLSX.utils.sheet_to_json(worksheet);
+
+        if (jsonData.length === 0) return alert("Faylku waa maran yahay!");
+
+        let count = 0;
+        let usedIds = allStudents.map(st => st.studentCustomId ? st.studentCustomId.toString().trim() : "");
+
+        jsonData.forEach(row => {
+            const studentName = row.Name || row['الاسم'] || row['name'];
+            const studentClass = row.Class || row['الفصل'] || row['class'];
+
+            if (studentName && studentClass) {
+                let baseID = 2526;
+                while (usedIds.includes(baseID.toString())) {
+                    baseID++;
+                }
+                usedIds.push(baseID.toString());
+
+                push(ref(db, 'students'), {
+                    name: studentName,
+                    class: studentClass,
+                    studentCustomId: baseID.toString()
+                });
+                count++;
+            }
+        });
+
+        alert(`Si guul leh ayaa looo soo xareeyay ${count} arday!`);
+        fileInput.value = ''; 
+        showPage('view-students'); 
+    };
+    reader.readAsArrayBuffer(file);
+};
+
+        window.loadIndStudents = (cls) => {
+            const sel = document.getElementById('indStudentSelect');
+            sel.innerHTML = '<option value="">-- اختر الطالب --</option>';
+            allStudents.filter(s => s.class === cls && !hiddenStudentsList[s.id]).forEach(s => {
+                sel.innerHTML += `<option value="${s.name}">${s.name}</option>`;
+            });
+        };
+
+        function renderAttendanceClasses() {
+            const grid = document.getElementById('classAttendanceGrid');
+            grid.innerHTML = '';
+            classesList.forEach(n => {
+                grid.innerHTML += `
+                    <div class="col-md-4 mb-3">
+                        <div class="card p-4 text-center border-start border-4 border-primary" style="cursor:pointer" onclick="viewClassLogs('${n}')">
+                            <i class="fas fa-folder-open fa-2x text-muted mb-2"></i>
+                            <h6 class="fw-bold mb-0">${n}</h6>
+                        </div>
+                    </div>`;
+            });
+        }
+
+        window.loadAttSubjects = (cls) => {
+            const sel = document.getElementById('attSubSelect');
+            sel.innerHTML = '<option value="">-- اختر المادة --</option>';
+            allSubjects.filter(s => s.className === cls).forEach(s => sel.innerHTML += `<option value="${s.name}">${s.name}</option>`);
+        };
+
+window.fetchAttStudents = () => {
+    const cls = document.getElementById('attClassSelect').value;
+    const sub = document.getElementById('attSubSelect').value;
+
+    if(!cls || !sub) {
+        alert("يرجى اختيار الفصل والمادة!");
+        return;
+    }
+
+    const tbody = document.getElementById('attTbody'); 
+    tbody.innerHTML = '';
+    
+    const students = allStudents.filter(s => s.class === cls && !hiddenStudentsList[s.id]);
+
+    if(students.length === 0) {
+        alert("لا يوجد طلاب في هذا الفصل!");
+        document.getElementById('attendanceResultArea').classList.add('d-none');
+        return;
+    }
+
+    students.forEach((s, idx) => {
+        tbody.innerHTML += `
+        <tr>
+            <td>${idx+1}</td>
+            <td>${s.name}</td>
+            <td class="text-center">
+                <div class="att-btn-group btn-group">
+                    <input type="radio" class="btn-check" name="st_${s.id}" id="p_${s.id}" value="Present" checked>
+                    <label class="btn btn-outline-success btn-sm px-3" for="p_${s.id}"><i class="fas fa-check"></i></label>
+                    <input type="radio" class="btn-check" name="st_${s.id}" id="a_${s.id}" value="Absent">
+                    <label class="btn btn-outline-danger btn-sm px-3" for="a_${s.id}"><i class="fas fa-times"></i></label>
+                </div>
+            </td>
+        </tr>`;
+    });
+    document.getElementById('attendanceResultArea').classList.remove('d-none');
+};
+
+window.hideAttTable = () => {
+    const area = document.getElementById('attendanceResultArea');
+    if(area) area.classList.add('d-none');
+};
+
+        window.saveAttendanceRecord = () => {
+            const date = document.getElementById('attDate').value, 
+                  cls = document.getElementById('attClassSelect').value, 
+                  sub = document.getElementById('attSubSelect').value,
+                  showInAbsentList = document.getElementById('toggleShowAbsent').checked; 
+
+            if(!date || !cls || !sub) return alert("يرجى إكمال جميع الحقول!");
+            const now = new Date();
+            const days = ["الأحد", "الاثنين", "الثلاثاء", "الأربعاء", "الخميس", "الجمعة", "السبت"];
+            const timeStr = now.toLocaleTimeString('en-US', { hour: '2-digit', minute: '2-digit', hour12: true });
+            const records = [];
+            
+            allStudents.filter(s => s.class === cls && !hiddenStudentsList[s.id]).forEach(s => {
+                records.push({ studentId: s.id, name: s.name, status: document.querySelector(`input[name="st_${s.id}"]:checked`).value });
+            });
+            
+            push(ref(db, 'attendance'), { 
+                date, 
+                class: cls, 
+                subject: sub, 
+                data: records, 
+                day: days[now.getDay()], 
+                time: timeStr, 
+                timestamp: Date.now(),
+                isVisibleInAbsent: showInAbsentList 
+            })
+            .then(() => { alert("تم حفظ الحضور!"); showPage('dashboard'); });
+        };
+
+   window.runAbsentFilter = () => {
+    const from = document.getElementById('absFromDate').value, 
+          to = document.getElementById('absToDate').value, 
+          cls = document.getElementById('absClassSelect').value;
+    const tbody = document.getElementById('absentListTbody'); 
+    tbody.innerHTML = '';
+
+    const studentAbsCount = {};  
+    allAttendance.forEach(att => {  
+        if(att.isVisibleInAbsent !== false) {  
+            const hiddenNames = att.hiddenFromAbsentList || [];
+            att.data.filter(s => s.status === "Absent" && !hiddenNames.includes(s.name)).forEach(st => {  
+                studentAbsCount[st.name] = (studentAbsCount[st.name] || 0) + 1;  
+            });  
+        }  
+    });  
+
+    let counter = 1;  
+    allAttendance.forEach(att => {  
+        if(att.isVisibleInAbsent !== false) {  
+            const hiddenNames = att.hiddenFromAbsentList || [];
+            if(((!from || !to) || (att.date >= from && att.date <= to)) && (cls === "All" || att.class === cls)) {  
+                att.data.filter(s => s.status === "Absent" && !hiddenNames.includes(s.name)).forEach(st => {  
+                    const matchSt = allStudents.find(s => s.name === st.name);
+                    if(matchSt && hiddenStudentsList[matchSt.id]) return;
+
+                    const totalAb = studentAbsCount[st.name] || 0;  
+                    tbody.innerHTML += `
+                    <tr>
+                        <td>${counter++}</td>
+                        <td class="fw-bold">${st.name}</td>
+                        <td>${att.class}</td>
+                        <td>${att.date}</td>
+                        <td>${att.day}</td>
+                        <td>${att.time}</td>
+                        <td><span class="badge bg-danger">${totalAb}</span></td>
+                        <td>
+                            <button class="btn btn-sm text-danger" onclick="hideThisRowOnly('${att.key}', '${st.name}')">
+                                <i class="fas fa-trash"></i>
+                            </button>
+                        </td>
+                    </tr>`;  
+                });  
+            }  
+        }  
+    });  
+};
+
+window.hideThisRowOnly = (attKey, studentName) => {
+    if(confirm('Ma hubtaa inaad row-ka qofkan kaliya ka saarto?')) {
+        const record = allAttendance.find(a => a.key === attKey);
+        if(!record) return;
+
+        let hiddenNames = record.hiddenFromAbsentList || [];
+        if(!hiddenNames.includes(studentName)) {
+            hiddenNames.push(studentName);
+        }
+
+        update(ref(db, 'attendance/' + attKey), { 
+            hiddenFromAbsentList: hiddenNames 
+        }).then(() => {
+            runAbsentFilter(); 
+            if(!document.getElementById('indAbsentResult').classList.contains('d-none')) {
+                searchIndividualAbsent(); 
+            }
+        });
+    }
+};
+
+        window.searchIndividualAbsent = () => {
+    const name = document.getElementById('indStudentSelect').value, 
+          cls = document.getElementById('indClassSelect').value;
+    const from = document.getElementById('indFromDate').value, 
+          to = document.getElementById('indToDate').value;
+    const tbody = document.getElementById('indAbsentTbody');
+    
+    if(!name || !cls) return alert("يرجى اختيار الفصل والطالب");
+    
+    let count = 0; 
+    tbody.innerHTML = '';
+
+    allAttendance.forEach(att => {
+        if(att.isVisibleInAbsent !== false) {
+            const hiddenNames = att.hiddenFromAbsentList || [];
+            const isWithinDate = (!from || !to) || (att.date >= from && att.date <= to);
+            
+            if(isWithinDate && att.class === cls && !hiddenNames.includes(name)) {
+                att.data.filter(s => s.status === "Absent" && s.name === name).forEach(match => {
+                    count++;
+                    tbody.innerHTML += `
+                    <tr>
+                        <td>${att.date}</td>
+                        <td>${att.day}</td>
+                        <td>${att.time}</td>
+                        <td>${att.subject}</td>
+                        <td><span class="status-badge bg-absent">غائب</span></td>
+                    </tr>`;
+                });
+            }
+        }
+    });
+
+    document.getElementById('indStudentLabel').innerText = name;
+    document.getElementById('indClassLabel').innerText = cls;
+    document.getElementById('indTotalCount').innerText = count; 
+    document.getElementById('indAbsentResult').classList.remove('d-none');
+};
+
+        window.viewClassLogs = (clsName) => {
+            activeClassForLogs = clsName;
+            document.getElementById('logClassName').innerText = clsName;
+            filterLogs();
+            showPage('view-class-logs');
+        };
+
+        window.filterLogs = () => {
+    const from = document.getElementById('filterFromDate').value, 
+          to = document.getElementById('filterToDate').value, 
+          tbody = document.getElementById('logsTableBody');
+    tbody.innerHTML = '';
+    
+    let filtered = allAttendance.filter(a => a.class === activeClassForLogs);
+    if(from && to) filtered = filtered.filter(a => a.date >= from && a.date <= to);
+    
+    filtered.forEach((a, idx) => {
+        tbody.innerHTML += `<tr>
+            <td>${idx+1}</td>
+            <td>${a.date}</td>
+            <td>${a.subject}</td>
+            <td class="text-center">
+                <button class="btn btn-sm btn-dark" onclick="viewDetails('${a.key}')">عرض</button>
+                <button class="btn btn-sm btn-danger ms-1" onclick="deleteAttendanceRecord('${a.key}')">
+                    <i class="fas fa-trash"></i>
+                </button>
+            </td>
+        </tr>`;
+    });
+};
+
+window.deleteAttendanceRecord = (key) => {
+    if(confirm('Ma hubtaa inaad kashifkan tirtirto?')) {
+        remove(ref(db, 'attendance/' + key))
+        .then(() => { 
+            alert('Waa la tirtiray!');
+            filterLogs(); 
+        });
+    }
+};
+
+        window.viewDetails = (key) => {
+            const record = allAttendance.find(a => a.key === key);
+            document.getElementById('detClass').innerText = record.class; document.getElementById('detSub').innerText = record.subject; document.getElementById('detDate').innerText = record.date;
+            const tbody = document.getElementById('detailsTableBody'); tbody.innerHTML = '';
+            record.data.forEach((s, idx) => {
+                const matchSt = allStudents.find(st => st.name === s.name);
+                if(matchSt && hiddenStudentsList[matchSt.id]) return;
+
+                const isPresent = s.status === 'Present';
+                tbody.innerHTML += `<tr>
+                    <td>${idx + 1}</td>
+                    <td>${s.name}</td>
+                    <td><span class="status-badge ${isPresent ? 'bg-present':'bg-absent'}">${isPresent ? 'حاضر ✓' : 'غائب X'}</span></td>
+                    <td class="text-center no-print">
+                        <button class="btn btn-sm btn-outline-dark" onclick="toggleAttendanceStatus('${key}', ${idx})"><i class="fas fa-sync-alt"></i> تحديث</button>
+                    </td>
+                </tr>`;
+            });
+            showPage('view-attendance-details');
+        };
+
+        window.toggleAttendanceStatus = (key, index) => {
+            const record = allAttendance.find(a => a.key === key);
+            const currentStatus = record.data[index].status;
+            record.data[index].status = (currentStatus === 'Present') ? 'Absent' : 'Present';
+            
+            update(ref(db, 'attendance/' + key), { data: record.data })
+            .then(() => { viewDetails(key); }); 
+        };
+
+        window.saveClass = () => {
+            const id = document.getElementById('editClassId').value, n = document.getElementById('classNameInput').value;
+            if(n) { if(id) update(ref(db, 'classes/'+id), {className: n}); else push(ref(db, 'classes'), {className: n}); showPage('view-classes'); }
+        };
+        window.editClass = (id, n) => { document.getElementById('editClassId').value = id; document.getElementById('classNameInput').value = n; showPage('add-class'); };
+
+        window.calculateNextStudentID = () => {
+            let usedIds = allStudents.map(st => st.studentCustomId ? st.studentCustomId.toString().trim() : "");
+            let nextID = 2526;
+            while (usedIds.includes(nextID.toString())) {
+                nextID++;
+            }
+            const customIdField = document.getElementById('customStudentId');
+            if(customIdField && !document.getElementById('studentId').value) {
+                customIdField.value = nextID;
+            }
+        };
+
+        window.handleStudent = () => {
+            const id = document.getElementById('studentId').value, 
+                  n = document.getElementById('name').value, 
+                  c = document.getElementById('classSelect').value,
+                  customId = document.getElementById('customStudentId').value.trim();
+            if(n && c && customId) { 
+                let duplicate = allStudents.find(st => st.studentCustomId && st.studentCustomId.toString().trim() === customId && st.id !== id);
+                let finalId = customId;
+                if (duplicate) {
+                    let usedIds = allStudents.map(st => st.studentCustomId ? st.studentCustomId.toString().trim() : "");
+                    let nextID = 2526;
+                    while (usedIds.includes(nextID.toString())) {
+                        nextID++;
+                    }
+                    finalId = nextID.toString();
+                    alert(`ID-gaan waa la qaatay! Waxaa si otomaatig ah loogu beddelay ID banaan oo ah: ${finalId}`);
+                }
+
+                if(id) {
+                    update(ref(db, 'students/'+id), {name: n, class: c, studentCustomId: finalId}); 
+                } else {
+                    push(ref(db, 'students'), {name: n, class: c, studentCustomId: finalId}); 
+                }
+                document.getElementById('studentId').value = '';
+                document.getElementById('name').value = '';
+                document.getElementById('studentFormTitle').innerText = "تسجيل طالب جديد";
+                showPage('view-students'); 
+            }
+        };
+window.editStudent = (id, n, c, customId) => { 
+    document.getElementById('studentId').value = id; 
+    document.getElementById('name').value = n; 
+    document.getElementById('classSelect').value = c; 
+    
+    if (!customId || customId === 'undefined' || customId.trim() === '') {
+        let usedIds = allStudents.map(st => st.studentCustomId ? st.studentCustomId.toString().trim() : "");
+        let nextID = 2526;
+        while (usedIds.includes(nextID.toString())) {
+            nextID++;
+        }
+        document.getElementById('customStudentId').value = nextID;
+    } else {
+        document.getElementById('customStudentId').value = customId;
+    }
+    
+    document.getElementById('studentFormTitle').innerText = "تعديل بيانات الطالب";
+    showPage('add-student'); 
+};
+
+        window.saveSubject = () => {
+            const id = document.getElementById('editSubjectId').value, n = document.getElementById('subjectNameInput').value, c = document.getElementById('subjectClassSelect').value;
+            if(n && c) { 
+                if(id) update(ref(db, 'subjects/'+id), {name: n, className: c}); 
+                else push(ref(db, 'subjects'), {name: n, className: c}); 
+                showPage('view-subjects-list'); 
+                resetSubjectForm();
+            }
+        };
+
+        window.editSubject = (id, name, cls) => {
+            document.getElementById('editSubjectId').value = id;
+            document.getElementById('subjectNameInput').value = name;
+            document.getElementById('subjectClassSelect').value = cls;
+            document.getElementById('subjectFormTitle').innerText = "تعديل المادة";
+            showPage('add-subject');
+        };
+
+        function resetSubjectForm() {
+            document.getElementById('editSubjectId').value = '';
+            document.getElementById('subjectNameInput').value = '';
+            document.getElementById('subjectFormTitle').innerText = "إضافة مادة دراسية";
+        }
+
+        window.viewSubjectsDetail = (className) => {
+            document.getElementById('currentClassTitle').innerText = className;
+            const t = document.getElementById('classSubjectsTbody'); t.innerHTML = ''; let i = 1;
+            allSubjects.filter(s => s.className === className).forEach(s => {
+                t.innerHTML += `<tr>
+                    <td>${i++}</td><td>${s.name}</td>
+                    <td class="text-center">
+                        <button onclick="editSubject('${s.id}','${s.name}','${s.className}')" class="btn btn-sm text-primary"><i class="fas fa-edit"></i></button>
+                        <button onclick="deleteData('subjects/${s.id}')" class="btn btn-sm text-danger ms-1"><i class="fas fa-trash"></i></button>
+                    </td></tr>`;
+            });
+            showPage('view-subjects-detail');
+        };
+
+        window.deleteData = (path) => { if(confirm('هل أنت متأكد؟')) remove(ref(db, path)); };
+        document.getElementById('attDate').valueAsDate = new Date();
+
+window.checkLogin = () => {
+    const userInp = document.getElementById('loginUser').value;
+    const passInp = document.getElementById('loginPass').value;
+    const errorMsg = document.getElementById('loginError');
+
+    if(userInp === "admin" && passInp === "123") {
+        currentLoggedInUserId = null; // Master admin: full access, wax laga xayirin
+        loginSuccess();
+        return;
+    }
+
+    const usersRef = ref(db, 'system_users');
+    onValue(usersRef, (snap) => {
+        let found = false;
+        let foundId = null;
+        snap.forEach(child => {
+            const data = child.val();
+            if(data.username === userInp && data.password === passInp) {
+                found = true;
+                foundId = child.key;
+            }
+        });
+
+        if(found) {
+            currentLoggedInUserId = foundId; // Halkan waxaa lagu xasuustaa user-ka soo galay si loo fulliyo xayiraadaha maadooyinka
+            loginSuccess();
+        } else {
+            errorMsg.classList.remove('d-none');
+        }
+    }, { onlyOnce: true });
+};
+
+function loginSuccess() {
+    document.getElementById('login-screen').style.display = 'none';
+    if (typeof applyMenuRestrictionsForCurrentUser === 'function') applyMenuRestrictionsForCurrentUser();
+}
+window.saveNewUser = () => {
+    const uInp = document.getElementById('newUsername');
+    const pInp = document.getElementById('newPassword');
+    
+    const user = uInp.value;
+    const pass = pInp.value;
+
+    if (user && pass) {
+        const userRef = ref(db, 'system_users'); 
+        push(userRef, {
+            username: user,
+            password: pass
+        }).then(() => {
+            alert("User-ka waa la kaydiyay!");
+            uInp.value = ''; 
+            pInp.value = '';
+            showPage('view-users'); 
+        });
+    } else {
+        alert("Fadlan buuxi meelaha banaan!");
+    }
+};
+
+onValue(ref(db, 'system_users'), (snap) => {
+    allSystemUsers = [];
+    snap.forEach(child => {
+        allSystemUsers.push({ id: child.key, username: child.val().username, password: child.val().password });
+    });
+
+    const tbody = document.getElementById('usersTableBody');
+    if (tbody) {
+        tbody.innerHTML = ''; 
+        snap.forEach(child => {
+            const data = child.val();
+            const id = child.key;
+            tbody.innerHTML += `
+                <tr>
+                    <td><b>${data.username}</b></td>
+                    <td>******</td>
+                    <td class="text-center">
+                        <button onclick="editUser('${id}', '${data.username}', '${data.password}')" class="btn btn-sm btn-primary me-1">
+                            <i class="fas fa-edit"></i>
+                        </button>
+                        <button onclick="deleteUserData('${id}')" class="btn btn-sm btn-danger">
+                            <i class="fas fa-trash"></i>
+                        </button>
+                    </td>
+                </tr>
+            `;
+        });
+    }
+
+    if (typeof populateAllUsersForRestrictSelect === 'function') populateAllUsersForRestrictSelect();
+});
+
+window.deleteUserData = (id) => {
+    if (confirm("Ma hubaal ayaad tahay?")) {
+        remove(ref(db, `system_users/${id}`))
+        .then(() => alert("Waa la tirtiray"));
+    }
+};
+
+window.editUser = (id, oldU, oldP) => {
+    const newU = prompt("Bedel Username-ka:", oldU);
+    const newP = prompt("Bedel Password-ka:", oldP);
+    if (newU && newP) {
+        update(ref(db, `system_users/${id}`), {
+            username: newU,
+            password: newP
+        }).then(() => alert("Waa la cusboonaysiiyay"));
+    }
+};
+
+function refreshDashboardTotals() {
+    const totalC = classesList.length;
+    document.getElementById('dashTotalClasses').innerText = totalC;
+
+    const totalSub = allSubjects.length;
+    document.getElementById('dashTotalSubjects').innerText = totalSub;
+
+    const activeStudents = allStudents.filter(s => !hiddenStudentsList[s.id]);
+    document.getElementById('dashTotalStudents').innerText = activeStudents.length;
+
+    let totalA = 0;
+    allAttendance.forEach(att => {
+        if (att.data) {
+            const absentCount = att.data.filter(s => s.status === "Absent").length;
+            totalA += absentCount;
+        }
+    });
+    document.getElementById('dashTotalAbsent').innerText = totalA;
+}
+
+window.saveAcademicYear = () => {
+    const yearId = document.getElementById('editYearId').value; 
+    const yearName = document.getElementById('yearNameInput').value;
+
+    if (yearName) {
+        if (yearId) {
+            const yearRef = ref(db, `academic_years/${yearId}`);
+            update(yearRef, {
+                year: yearName
+            }).then(() => {
+                alert("Sannad dugsiyeedka waa la cusboonaysiiyay!");
+                resetYearForm();
+                showPage('view-years-section');
+            });
+        } else {
+            const yearRef = ref(db, 'academic_years');
+            push(yearRef, {
+                year: yearName,
+                status: 'active',
+                timestamp: Date.now()
+            }).then(() => {
+                alert("Sannad dugsiyeedka si guul leh ayaa loo keydiyay!");
+                resetYearForm();
+                showPage('view-years-section');
+            });
+        }
+    } else {
+        alert("Fadlan qor magaca sanadka!");
+    }
+};
+
+window.editAcademicYear = (id, yearName) => {
+    document.getElementById('editYearId').value = id;
+    document.getElementById('yearNameInput').value = yearName;
+    showPage('add-year-section');
+};
+
+function resetYearForm() {
+    document.getElementById('editYearId').value = '';
+    document.getElementById('yearNameInput').value = '';
+}
+
+onValue(ref(db, 'academic_years'), (snap) => {
+    const tbody = document.getElementById('yearsTableBody');
+    const examYearSelect = document.getElementById('examYearSelect');
+    const resYear = document.getElementById('resYear');
+    const viewYear = document.getElementById('viewResYear');
+
+    if (!tbody) return;
+    tbody.innerHTML = '';
+    const selects = [examYearSelect, resYear, viewYear];
+    selects.forEach(sel => {
+        if(sel) sel.innerHTML = '<option value="">Dooro Sanadka...</option>';
+    });
+
+    let counter = 1;
+    snap.forEach(child => {
+        const data = child.val();
+        const id = child.key;
+
+        tbody.innerHTML += `
+            <tr>
+                <td>${counter++}</td>
+                <td class="fw-bold">${data.year}</td>
+                <td class="no-print">
+                    <button onclick="editAcademicYear('${id}', '${data.year}')" class="btn btn-sm text-primary border me-2">
+                        <i class="fas fa-edit"></i> wax ka beddel
+                    </button>
+                    <button onclick="deleteData('academic_years/${id}')" class="btn btn-sm text-danger border">
+                        <i class="fas fa-trash"></i> tirtir
+                    </button>
+                </td>
+            </tr>
+        `;
+
+        selects.forEach(sel => {
+            if(sel) sel.innerHTML += `<option value="${data.year}">${data.year}</option>`;
+        });
+    });
+});
+
+window.saveExam = () => {
+    const examId = document.getElementById('editExamId').value;
+    const type = document.getElementById('examTypeInput').value;
+    const year = document.getElementById('examYearSelect').value;
+
+    if (type && year) {
+        const examName = `${type} (${year})`; 
+        if (examId) {
+            update(ref(db, `exams/${examId}`), {
+                type: type,
+                year: year,
+                examName: examName
+            }).then(() => {
+                alert("Imtixaanka waa la cusboonaysiiyay!");
+                resetExamForm();
+                showPage('view-exams-section');
+            });
+        } else {
+            push(ref(db, 'exams'), {
+                type: type,
+                year: year,
+                examName: examName,
+                timestamp: Date.now()
+            }).then(() => {
+                alert("Imtixaanka si guul leh ayaa loo keydiyay!");
+                resetExamForm();
+                showPage('view-exams-section');
+            });
+        }
+    } else {
+        alert("Fadlan buuxi dhammaan xogta imtixaan!");
+    }
+};
+
+window.editExam = (id, type, year) => {
+    document.getElementById('editExamId').value = id;
+    document.getElementById('examTypeInput').value = type;
+    document.getElementById('examYearSelect').value = year;
+    showPage('add-section');
+};
+
+function resetExamForm() {
+    document.getElementById('editExamId').value = '';
+}
+
+onValue(ref(db, 'exams'), (snap) => {
+    allExams = []; 
+    const tbody = document.getElementById('examsTableBody');
+    const resExam = document.getElementById('resExam'); 
+    const viewExam = document.getElementById('viewResExam'); 
+
+    if (!tbody) return;
+    tbody.innerHTML = '';
+    if(resExam) resExam.innerHTML = '<option value="">Dooro Imtixaan...</option>';
+    if(viewExam) viewExam.innerHTML = '<option value="">Dooro Imtixaan...</option>';
+    const admExamReset = document.getElementById('admCardExam');
+    if(admExamReset) admExamReset.innerHTML = '<option value="">-- اختر الامتحان --</option>';
+
+    let counter = 1;
+    snap.forEach(child => {
+        const data = child.val();
+        const id = child.key;
+        allExams.push({ id, ...data });
+
+        tbody.innerHTML += `
+            <tr>
+                <td>${counter++}</td>
+                <td class="fw-bold text-primary">${data.type}</td>
+                <td>${data.year}</td>
+                <td class="no-print">
+                    <button onclick="editExam('${id}', '${data.type}', '${data.year}')" class="btn btn-sm text-primary border me-2">
+                        <i class="fas fa-edit"></i> edit
+                    </button>
+                    <button onclick="deleteData('exams/${id}')" class="btn btn-sm text-danger border">
+                        <i class="fas fa-trash"></i> tirtir
+                    </button>
+                </td>
+            </tr>
+        `;
+        if(resExam) resExam.innerHTML += `<option value="${id}">${data.examName}</option>`;
+        if(viewExam) viewExam.innerHTML += `<option value="${id}">${data.examName}</option>`;
+        const admExam = document.getElementById('admCardExam');
+        if(admExam) admExam.innerHTML += `<option value="${id}">${data.examName}</option>`;
+    });
+});
+
+window.filterExamsByYear = (year) => {
+    const resExam = document.getElementById('resExam');
+    resExam.innerHTML = '<option value="">-- اختر الامتحان --</option>';
+    // Haddii user-kan (login-ka) uu leeyahay imtixaanno la xayiray FASALKAN GAAR AH (resClass), halkan waa laga saaraa dropdown-ka "Add Result"
+    const selectedClassEl = document.getElementById('resClass');
+    const selectedClass = selectedClassEl ? selectedClassEl.value : '';
+    const blockedExamsForCurrentUser = (currentLoggedInUserId && selectedClass && blockedExamsList[currentLoggedInUserId] && blockedExamsList[currentLoggedInUserId][selectedClass]) || {};
+    onValue(ref(db, 'exams'), (snap) => {
+        snap.forEach(child => {
+            const data = child.val();
+            if(data.year === year && !blockedExamsForCurrentUser[child.key]) {
+                resExam.innerHTML += `<option value="${child.key}">${data.examName}</option>`;
+            }
+        });
+    }, { onlyOnce: true });
+};
+
+window.filterSubjectsByClass = (cls) => {
+    const resSub = document.getElementById('resSubject');
+    resSub.innerHTML = '<option value="">-- اختر المادة --</option>';
+    // Haddii user-kan (login-ka) uu leeyahay maadooyin la xayiray FASALKAN GAAR AH, halkan waa laga saaraa dropdown-ka "Add Result"
+    const blockedForCurrentUser = (currentLoggedInUserId && blockedSubjectsList[currentLoggedInUserId] && blockedSubjectsList[currentLoggedInUserId][cls]) || {};
+    allSubjects.filter(s => s.className === cls && !blockedForCurrentUser[s.name]).forEach(s => {
+        resSub.innerHTML += `<option value="${s.name}">${s.name}</option>`;
+    });
+
+    // Maadaama xayiraadda imtixaanadu hadda ay ku xirnaan tahay Fasalka (resClass), dib u shaandhee
+    // dropdown-ka "resExam" haddii Sanadka (resYear) horeba loo doortay.
+    const resYearEl = document.getElementById('resYear');
+    if (resYearEl && resYearEl.value) {
+        filterExamsByYear(resYearEl.value);
+    }
+};
+
+window.fetchStudentsForResult = () => {
+    const year = document.getElementById('resYear').value;
+    const examId = document.getElementById('resExam').value;
+    const cls = document.getElementById('resClass').value;
+    const sub = document.getElementById('resSubject').value;
+
+    if(!year || !examId || !cls || !sub) return alert("Fadlan buuxi dhamaan xogta kore!");
+
+    const tbody = document.getElementById('resTbody');
+    tbody.innerHTML = '<tr><td colspan="3">Raadinaya xogta...</td></tr>';
+    
+    onValue(ref(db, 'results'), (snap) => {
+        let existingResults = null;
+        snap.forEach(child => {
+            const data = child.val();
+            if(data.academicYear === year && data.examId === examId && 
+               data.className === cls && data.subjectName === sub) {
+                existingResults = data.results; 
+            }
+        });
+
+        const students = allStudents.filter(s => s.class === cls && !hiddenStudentsList[s.id]);
+        if(students.length === 0) {
+            tbody.innerHTML = '<tr><td colspan="3">Fasalkan arday diyaar ah kuma jirto ama waa la wada xiray!</td></tr>';
+            return;
+        }
+
+        tbody.innerHTML = '';
+        students.forEach((s, idx) => {
+            let oldScore = "";
+            if(existingResults) {
+                const stMatch = existingResults.find(r => r.studentId === s.id);
+                if(stMatch) oldScore = stMatch.score;
+            }
+
+            tbody.innerHTML += `
+                <tr>
+                    <td>${idx + 1}</td>
+                    <td class="text-start">${s.name}</td>
+                    <td>
+                        <input type="number" class="form-control text-center st-grade" 
+                               data-id="${s.id}" data-name="${s.name}" 
+                               value="${oldScore}" placeholder="0-100">
+                    </td>
+                </tr>`;
+        });
+
+const controlArea = document.getElementById('resClearControl');
+if(controlArea) {
+    controlArea.innerHTML = `
+        <div class="d-flex gap-2">
+            <button type="button" class="btn btn-warning btn-sm fw-bold shadow-sm" onclick="clearAllCurrentMarks()">
+                <i class="fas fa-eraser me-1"></i> Clear Marks
+            </button>
+            <label class="btn btn-success btn-sm fw-bold shadow-sm mb-0">
+                <i class="fas fa-file-excel me-1"></i> Import from Excel
+                <input type="file" id="excelInput" accept=".xlsx, .xls" style="display:none" onchange="importMarksFromExcel(event)">
+            </label>
+        </div>
+    `;
+}
+
+window.importMarksFromExcel = (event) => {
+    const file = event.target.files[0];
+    if (!file) return;
+
+    const reader = new FileReader();
+    reader.onload = (e) => {
+        const data = new Uint8Array(e.target.result);
+        const workbook = XLSX.read(data, { type: 'array' });
+        const firstSheetName = workbook.SheetNames[0];
+        const worksheet = workbook.Sheets[firstSheetName];
+        const jsonData = XLSX.utils.sheet_to_json(worksheet);
+
+        const inputs = document.querySelectorAll('.st-grade');
+        let matchCount = 0;
+
+        jsonData.forEach(row => {
+            const excelName = row.Name || row.Magaca || row.studentName;
+            const excelMark = row.Mark || row.Dhibcaha || row.score;
+
+            if (excelName && excelMark !== undefined) {
+                inputs.forEach(input => {
+                    if (input.dataset.name.trim().toLowerCase() === excelName.toString().trim().toLowerCase()) {
+                        input.value = excelMark;
+                        matchCount++;
+                    }
+                });
+            }
+        });
+        alert(`Excel-ka waa la akhriyay! ${matchCount} arday ayaa dhibco loo helay.`);
+        event.target.value = ""; 
+    };
+    reader.readAsArrayBuffer(file);
+};
+
+window.clearAllCurrentMarks = () => {
+    const inputs = document.querySelectorAll('.st-grade');
+    if(inputs.length === 0) return;
+    if(confirm("Ma hubtaa inaad gabi ahaanba tirtirto dhibcaha aad hadدا qortay?")) {
+        inputs.forEach(input => { input.value = ""; });
+    }
+};
+        document.getElementById('resultEntryArea').classList.remove('d-none');
+    }, { onlyOnce: true });
+};
+
+window.saveStudentsResults = () => {
+    const year = document.getElementById('resYear').value;
+    const examId = document.getElementById('resExam').value;
+    const cls = document.getElementById('resClass').value;
+    const sub = document.getElementById('resSubject').value;
+    const examName = document.getElementById('resExam').options[document.getElementById('resExam').selectedIndex].text;
+
+    const grades = [];
+    document.querySelectorAll('.st-grade').forEach(input => {
+        if (input.value.trim() !== "") { 
+            grades.push({
+                studentId: input.dataset.id,
+                studentName: input.dataset.name,
+                score: input.value 
+            });
+        }
+    });
+
+    if (grades.length === 0) {
+        if(confirm("Dhammaan dhibcaha waa maran yihiin. Ma rabtaa inaan tirtirno xogta imtixaankan si uu bilow ugu laabto?")) {
+            deleteExistingResults(year, examId, cls, sub);
+        }
+        return; 
+    }
+
+    const resultData = {
+        academicYear: year,
+        examId: examId,
+        examName: examName,
+        className: cls,
+        subjectName: sub,
+        results: grades,
+        timestamp: Date.now()
+    };
+
+    deleteExistingResults(year, examId, cls, sub, () => {
+        push(ref(db, 'results'), resultData).then(() => {
+            alert("Natiijada waa la cusubaysay (Updated Successfully)!");
+            document.getElementById('resultEntryArea').classList.add('d-none');
+        });
+    });
+};
+
+const deleteExistingResults = (year, examId, cls, sub, callback) => {
+    onValue(ref(db, 'results'), (snap) => {
+        snap.forEach(child => {
+            const d = child.val();
+            if(d.academicYear === year && d.examId === examId && 
+               d.className === cls && d.subjectName === sub) {
+                remove(ref(db, `results/${child.key}`)); 
+            }
+        });
+        if(callback) callback();
+    }, { onlyOnce: true });
+};
+
+window.filterExamsForView = (year) => {
+    const viewResExam = document.getElementById('viewResExam');
+    viewResExam.innerHTML = '<option value="">-- Choose Exam --</option>';
+    if (!year) return;
+
+    // Haddii user-kan (login-ka) uu leeyahay imtixaanno la xayiray FASALKAN GAAR AH (viewResClass), halkan waa laga saaraa dropdown-ka "View Results"
+    const selectedClassEl = document.getElementById('viewResClass');
+    const selectedClass = selectedClassEl ? selectedClassEl.value : '';
+    const blockedExamsForCurrentUser = (currentLoggedInUserId && selectedClass && blockedExamsList[currentLoggedInUserId] && blockedExamsList[currentLoggedInUserId][selectedClass]) || {};
+
+    onValue(ref(db, 'exams'), (snap) => {
+        viewResExam.innerHTML += `<option value="All">All Exams (Dhammaan)</option>`;
+        snap.forEach(child => {
+            const data = child.val();
+            if(data.year === year && !blockedExamsForCurrentUser[child.key]) {
+                viewResExam.innerHTML += `<option value="${child.key}">${data.type || data.examName}</option>`;
+            }
+        });
+    }, { onlyOnce: true });
+};
+
+window.filterSubjectsForView = (cls) => {
+    const viewResSub = document.getElementById('viewResSubject');
+    viewResSub.innerHTML = '<option value="All">All Subjects</option>';
+    // Haddii user-kan (login-ka) uu leeyahay maadooyin la xayiray FASALKAN GAAR AH, halkan waa laga saaraa dropdown-ka
+    const blockedForCurrentUser = (currentLoggedInUserId && blockedSubjectsList[currentLoggedInUserId] && blockedSubjectsList[currentLoggedInUserId][cls]) || {};
+    allSubjects.filter(s => s.className === cls && !blockedForCurrentUser[s.name]).forEach(s => {
+        viewResSub.innerHTML += `<option value="${s.name}">${s.name}</option>`;
+    });
+
+    // Maadaama xayiraadda imtixaanadu hadda ay ku xirnaan tahay Fasalka (viewResClass), dib u shaandhee
+    // dropdown-ka "viewResExam" haddii Sanadka (viewResYear) horeba loo doortay.
+    const viewResYearEl = document.getElementById('viewResYear');
+    if (viewResYearEl && viewResYearEl.value) {
+        filterExamsForView(viewResYearEl.value);
+    }
+};
+
+window.generateResultReport = () => {
+    const year = document.getElementById('viewResYear').value;
+    const examId = document.getElementById('viewResExam').value;
+    const cls = document.getElementById('viewResClass').value;
+    const subFilter = document.getElementById('viewResSubject').value;
+    const examText = document.getElementById('viewResExam').options[document.getElementById('viewResExam').selectedIndex].text;
+
+    if(!year || !examId || !cls) return alert("Fadlan dooro Sanadka, Imtixaanka iyo Fasalka!");
+
+    onValue(ref(db, 'results'), (snap) => {
+        let matchingData = [];
+        snap.forEach(child => {
+            const d = child.val();
+            if(d.academicYear === year && d.className === cls) {
+                if(examId === "All" || d.examId === examId) {
+                    matchingData.push({...d, key: child.key});
+                }
+            }
+        });
+
+        if(matchingData.length === 0) return alert("Wax natiijo ah lama helin!");
+
+        let subjects = [...new Set(matchingData.map(d => d.subjectName))];
+        if(subFilter !== "All") subjects = [subFilter];
+
+        let studentGrades = {};
+        matchingData.forEach(entry => {
+            if(subFilter !== "All" && entry.subjectName !== subFilter) return;
+            
+            entry.results.forEach(res => {
+                // Halkan shuruud ayaa lagu daray: Haddii ardaygu xayiran yahay laga soo muuqan maayo View Result-ka fasalka
+                if (hiddenStudentsList[res.studentId] === true) return;
+
+                if(!studentGrades[res.studentId]) {
+                    studentGrades[res.studentId] = { name: res.studentName, scores: {}, total: 0, resultKeys: [] };
+                }
+                let score = parseFloat(res.score) || 0;
+                
+                if(!studentGrades[res.studentId].scores[entry.subjectName]) {
+                    studentGrades[res.studentId].scores[entry.subjectName] = 0;
+                }
+                studentGrades[res.studentId].scores[entry.subjectName] += score;
+                studentGrades[res.studentId].total += score;
+                studentGrades[res.studentId].resultKeys.push(entry.key);
+            });
+        });
+
+        let thead = `<tr><th>الرقم</th><th>اسم الطالب/ ــة</th>`;
+        subjects.forEach(s => thead += `<th>${s}</th>`);
+        thead += `<th>المجموع</th><th>النسبة المئوية</th><th>المرتبة</th></tr>`;
+        document.getElementById('resultsThead').innerHTML = thead;
+
+        let sortedArray = Object.values(studentGrades).sort((a, b) => b.total - a.total);
+        let currentRank = 0;
+        let lastTotal = -1;
+        let tbody = '';
+
+        sortedArray.forEach((st, index) => {
+            if (st.total !== lastTotal) currentRank++;
+            lastTotal = st.total;
+            let avg = (st.total / subjects.length).toFixed(1);
+            
+            tbody += `<tr>
+                <td style="border: 1px solid black;">${index + 1}</td>
+                <td class="text-start fw-bold" style="border: 1px solid black;">${st.name}</td>`;
+            
+            subjects.forEach(s => {
+                let sScore = st.scores[s] !== undefined ? st.scores[s] : '-';
+                tbody += `<td style="border: 1px solid black;">${sScore}</td>`;
+            });
+
+            tbody += `
+                <td class="fw-bold" style="border: 1px solid black;">${st.total}</td>
+                <td class="fw-bold" style="border: 1px solid black;">${avg}%</td>
+                <td style="border: 1px solid black; font-weight: bold;">${currentRank}</td>
+            </tr>`;
+        });
+
+        document.getElementById('resultsTbody').innerHTML = tbody;
+        document.getElementById('reportHeaderInfo').classList.remove('d-none');
+        document.getElementById('displayInfoText').innerText = `الفصل: ${cls} | الامتحان: ${examText} | السنة الدراسية: ${year}`;
+        document.getElementById('reportHeaderInfo').style.direction = "rtl";
+    });
+};
+
+window.exportToExcel = (tableId) => {
+    let table = document.getElementById(tableId);
+    let wb = XLSX.utils.table_to_book(table, { sheet: "Natiijada" });
+    XLSX.writeFile(wb, "Natiijada_Ardayda.xlsx");
+};
+
+window.filterExamsForCards = (year) => {
+    const cardExam = document.getElementById('cardExam');
+    if(!cardExam) return;
+    cardExam.innerHTML = '<option value="All">جميع الامتحانات (All)</option>';
+    if (!year) return;
+
+    onValue(ref(db, 'exams'), (snap) => {
+        snap.forEach(child => {
+            const data = child.val();
+            if(data.year === year) {
+                cardExam.innerHTML += `<option value="${child.key}">${data.type || data.examName}</option>`;
+            }
+        });
+    }, { onlyOnce: true });
+};
+
+window.filterStudentsForCards = (selectedClass) => {
+    const studentSelect = document.getElementById('cardStudent');
+    if(!studentSelect) return;
+    studentSelect.innerHTML = '<option value="All">جميع الطلاب (All Students)</option>';
+
+    if (!selectedClass) return; 
+    // Halkan ardayda xayiran waa laga saaray si aan loogu dooran karin card keligiis ah
+    const classStudents = allStudents.filter(student => student.class === selectedClass && !hiddenStudentsList[student.id]);
+    if (classStudents.length > 0) {
+        classStudents.forEach(st => {
+            studentSelect.innerHTML += `<option value="${st.id}">${st.name}</option>`;
+        });
+    }
+};
+
+window.generateResultCards = () => {
+    const year = document.getElementById('cardYear').value;
+    const cls = document.getElementById('cardClass').value;
+    const stId = document.getElementById('cardStudent').value;
+    const exId = document.getElementById('cardExam').value;
+
+    if(!year || !cls) return alert("الرجاء اختيار السنة والفصل!");
+
+    onValue(ref(db, 'results'), (snap) => {
+        let allResults = [];
+        snap.forEach(child => {
+            const d = child.val();
+            if(d.academicYear === year && d.className === cls) {
+                if(exId === "All" || d.examId === exId) {
+                    allResults.push(d);
+                }
+            }
+        });
+
+        const container = document.getElementById('resultCardsContainer');
+        container.innerHTML = '';
+
+        let targetStudents = allStudents.filter(s => s.class === cls);
+        if(stId !== "All") targetStudents = targetStudents.filter(s => s.id === stId);
+
+        targetStudents.forEach(student => {
+            let cardHtml = `
+                <div class="result-card-print p-4 mb-5 border border-dark bg-white" dir="rtl" style="color: black; min-height: 500px;">
+                    <div class="text-center mb-4">
+                        <h2 class="fw-bold m-0">معهد التأصيل (الفرع الثاني)</h2>
+                        <h4 class="m-0">بطاقة نتائج الطالب - ${year}</h4>
+                    </div>
+
+                    <div class="row mb-3 fw-bold">
+                        <div class="col-6 text-end">اسم الطالب: ${student.name}</div>
+                        <div class="col-6 text-start">الفصل: ${cls}</div>
+                    </div>
+
+                    <table class="table table-bordered border-dark text-center">
+                        <thead class="table-light">
+                            <tr>
+                                <th style="border: 1px solid black;">المادة (Subject)</th>
+                                <th style="border: 1px solid black;">الامتحان (Exam)</th>
+                                <th style="border: 1px solid black;">الدرجة (Score)</th>
+                            </tr>
+                        </thead>
+                        <tbody>`;
+            
+            let total = 0;
+            let count = 0;
+            
+            allResults.forEach(r => {
+                const stScore = r.results.find(res => res.studentId === student.id);
+                if(stScore) {
+                    cardHtml += `<tr>
+                        <td style="border: 1px solid black;">${r.subjectName}</td>
+                        <td style="border: 1px solid black;">${r.examName}</td>
+                        <td style="border: 1px solid black;">${stScore.score}</td>
+                    </tr>`;
+                    total += parseFloat(stScore.score);
+                    count++;
+                }
+            });
+
+            cardHtml += `
+                        <tr class="fw-bold">
+                            <td colspan="2" style="border: 1px solid black;">المجموع الكلي (Total)</td>
+                            <td style="border: 1px solid black;">${total}</td>
+                        </tr>
+                    </tbody>
+                </table>
+
+                <div class="row mt-5">
+                    <div class="col-6 text-end">التاريخ: ${new Date().toLocaleDateString()}</div>
+                    <div class="col-6 text-start">توقيع المدير: _________________</div>
+                </div>
+                <div style="page-break-after: always;"></div>
+            </div>`;
+            
+            container.innerHTML += cardHtml;
+        });
+    }, { onlyOnce: true });
+};
+// A. Dhagaysiga Sanadaha (Academic Years) ka imaanaya Firebase
+onValue(ref(db, 'academic_years'), (snap) => {
+    // Waxaan ku darnay 'cardYear' iyo 'restrictExamYearSelect' liiska ID-yada
+    const yearSelects = ['resYear', 'viewResYear', 'examYearSelect', 'cardYear', 'restrictExamYearSelect'];
+    
+    yearSelects.forEach(id => {
+        const el = document.getElementById(id);
+        if(el) {
+            el.innerHTML = '<option value="">-- اختر السنة الدراسية --</option>';
+            el.dir = "rtl"; // Hubi inuu dhanka midig yahay
+        }
+    });
+
+    allAcademicYears = [];
+    snap.forEach(child => {
+        const yearData = child.val().year;
+        allAcademicYears.push({ id: child.key, year: yearData });
+        yearSelects.forEach(id => {
+            const el = document.getElementById(id);
+            if(el) el.innerHTML += `<option value="${yearData}">${yearData}</option>`;
+        });
+    });
+
+    if (typeof renderUserExamBlocksTable === 'function') renderUserExamBlocksTable();
+});
+// 1. Marka Sanadka la doorto (View Result Cards), soo saar imtixaanada sanadkaas kaliya
+window.filterExamsForCards = (year) => {
+    // Waxaan isticmaalaynaa ID-ga u gaarka ah Result Cards (cardExam)
+    const cardExam = document.getElementById('cardExam');
+    
+    if(!cardExam) return;
+
+    // Nadiifi dropdown-ka, kuna dar ikhtiyaarka "Dhammaan" (All)
+    cardExam.innerHTML = '<option value="All">جميع الامتحانات (All)</option>';
+    cardExam.dir = "rtl";
+
+    if (!year) return; // Haddii aan sanad la dooran, ha socon
+
+    // Waxaan ka dhex raadinaynaa Firebase-ka imtixaanada (allExams)
+    onValue(ref(db, 'exams'), (snap) => {
+        let found = false;
+        snap.forEach(child => {
+            const data = child.val();
+            // Haddii sanadka imtixaanka uu la mid yahay sanadka la doortay
+            if(data.year === year) {
+                // Ku shub magaca imtixaanka (Final, Midterm, etc.)
+                cardExam.innerHTML += `<option value="${child.key}">${data.type || data.examName}</option>`;
+                found = true;
+            }
+        });
+        
+        if(!found) {
+            cardExam.innerHTML = '<option value="All">لا توجد امتحانات لهذا العام</option>';
+        }
+    }, { onlyOnce: true });
+};
+// Function-ka sifeeya ardayda marka fasalka la doorto (View Result Cards)
+window.filterStudentsForCards = (selectedClass) => {
+    const studentSelect = document.getElementById('cardStudent');
+    
+    if(!studentSelect) return;
+
+    // 1. Marka hore ku dar ikhtiyaarka "Dhammaan" (All Students)
+    studentSelect.innerHTML = '<option value="All">جميع الطلاب (All Students)</option>';
+    studentSelect.dir = "rtl";
+
+    if (!selectedClass) return; // Haddii aan fasal la dooran, jooji
+
+    // 2. Ka raadi allStudents ardayda ku jirta fasalka la doortay
+    // Hubi in array-ga 'allStudents' uu xogta ka helay Firebase horey
+    const classStudents = allStudents.filter(student => student.class === selectedClass);
+
+    if (classStudents.length > 0) {
+        classStudents.forEach(st => {
+            // st.id waa key-ga Firebase, st.name waa magaca ardayga
+            studentSelect.innerHTML += `<option value="${st.id}">${st.name}</option>`;
+        });
+    } else {
+        // Haddii fasalka la doortay uusan arday lahayn
+        console.log("Fasalkan arday kuma jirto.");
+    }
+};
+window.generateResultCards = () => {
+    const year = document.getElementById('cardYear').value;
+    const cls = document.getElementById('cardClass').value;
+    const stId = document.getElementById('cardStudent').value;
+    const exId = document.getElementById('cardExam').value;
+
+    if(!year || !cls) return alert("الرجاء اختيار السنة والفصل!");
+
+    onValue(ref(db, 'results'), (snap) => {
+        let allResults = [];
+        let selectedExamsSet = new Set();
+        let uniqueSubjects = new Set(); 
+
+        snap.forEach(child => {
+            const d = child.val();
+            if(d.academicYear === year && d.className === cls) {
+                if(exId === "All" || d.examId === exId) {
+                    allResults.push(d);
+                    let cleanExamName = d.examName.replace(year, "").replace(/[()]/g, "").trim(); 
+                    selectedExamsSet.add(cleanExamName); 
+                    uniqueSubjects.add(d.subjectName);
+                }
+            }
+        });
+
+        const selectedExamsArr = Array.from(selectedExamsSet);
+        const totalSubjectsCount = uniqueSubjects.size;
+        const container = document.getElementById('resultCardsContainer');
+        
+        container.innerHTML = `
+            <div class="no-print" style="text-align: center; margin-bottom: 20px;">
+                <button onclick="window.print()" style="padding: 10px 30px; font-size: 18px; cursor: pointer; background: #28a745; color: white; border: none; border-radius: 5px;">
+                    🖨️ Daabac Kaarka (Print)
+                </button>
+            </div>
+        `;
+
+        let targetStudents = allStudents.filter(s => s.class === cls);
+
+        // Xisaabinta Average iyo Rank
+        let studentDataMap = {}; 
+        targetStudents.forEach(st => {
+            let total = 0;
+            allResults.forEach(res => {
+                const scoreObj = res.results.find(r => r.studentId === st.id);
+                if(scoreObj) total += parseFloat(scoreObj.score) || 0;
+            });
+            let avg = totalSubjectsCount > 0 ? (total / totalSubjectsCount).toFixed(2) : "0.00";
+            studentDataMap[st.id] = { total, avg, id: st.id };
+        });
+
+        let sortedStudents = Object.values(studentDataMap).sort((a, b) => b.total - a.total);
+        let currentRank = 0, lastTotal = -1;
+        sortedStudents.forEach((st) => {
+            if (st.total !== lastTotal) currentRank++;
+            studentDataMap[st.id].rank = currentRank;
+            lastTotal = st.total;
+        });
+
+        if(stId !== "All") targetStudents = targetStudents.filter(s => s.id === stId);
+
+        // Midabada loo isticmaalayo Header-ka Imtixaanada (Laba midab oo kala duwan)
+        const headerColors = ["#f8bbd0", "#e1bee7"]; // Pink khafiif ah iyo Purple khafiif ah
+
+        targetStudents.forEach(student => {
+            let subjectsMap = {}; 
+            const stInfo = studentDataMap[student.id];
+
+            allResults.forEach(res => {
+                const stScore = res.results.find(r => r.studentId === student.id);
+                if(stScore) {
+                    let cleanName = res.examName.replace(year, "").replace(/[()]/g, "").trim();
+                    if(!subjectsMap[res.subjectName]) subjectsMap[res.subjectName] = {};
+                    subjectsMap[res.subjectName][cleanName] = parseFloat(stScore.score) || 0;
+                }
+            });
+
+            // 1. DHISMAHA HEADER-KA (Dynamic Colors)
+            let headerHtml = `<tr>
+                <th style="background-color: #e0f7fa !important; width: 8%;">الرقم</th>
+                <th class="col-header" style="width: 35%;">الـمـواد</th>`;
+            
+            selectedExamsArr.forEach((exName, index) => {
+                // Halkan labada imtixaan midabo kala duwan ayaan siinaynaa (Header kaliya)
+                let bgColor = headerColors[index % headerColors.length];
+                headerHtml += `<th style="background-color: ${bgColor} !important;">${exName}</th>`;
+            });
+            
+            headerHtml += `<th style="background-color: #fff9c4 !important; width: 20%;">المجموع</th></tr>`;
+
+            // 2. DHISMAHA ROW-YADA (Sida caadiga ah/Midab la'aan)
+            let rowsHtml = '';
+            let rowIndex = 1;
+            for (let subName in subjectsMap) {
+                let subTotal = 0;
+                let cellsHtml = '';
+                selectedExamsArr.forEach(exName => {
+                    let score = subjectsMap[subName][exName] || 0;
+                    subTotal += score;
+                    cellsHtml += `<td>${score}</td>`; // Safafka midab ma leh
+                });
+                
+                rowsHtml += `<tr>
+                    <td>${rowIndex++}</td> 
+                    <td style="text-align: right;">${subName}</td>
+                    ${cellsHtml}
+                    <td>${subTotal}</td>
+                </tr>`;
+            }
+
+            container.innerHTML += `
+                <div class="report-card">
+                    <div class="header-image-container">
+                        <img src="Logotasil.jpg" alt="Header">
+                    </div>
+                    <div class="title-box">معهد التأصيل للعلوم الإسلامية والعربية</div>
+                    <div class="title-box">الفرع الثانــــــــي</div>
+                    <div class="title-box">كشف الدرجات</div>
+                    <div class="title-box">العام الدراسي ${year}</div>
+
+                    <table class="student-info">
+                        <tr><td>الاسم : ${student.name}</td></tr>
+                        <tr><td>الفصل : ${cls}</td></tr>
+                    </table>
+
+                    <table class="grades-table">
+                        <thead>${headerHtml}</thead>
+                        <tbody>${rowsHtml}</tbody>
+                    </table>
+
+                    <table class="summary-table">
+                        <tr style="background-color: #f5f5f5;">
+                            <td>المجموع الكلي</td>
+                            <td>% النسبة المئوية</td>
+                            <td>المرتبة</td>
+                        </tr>
+                        <tr>
+                            <td>${stInfo.total}</td>
+                            <td>${stInfo.avg}</td>
+                            <td>${stInfo.rank}</td>
+                        </tr>
+                    </table>
+
+                    <div class="signatures" style="text-align: right; padding-right: 40px; margin-top: 40px;">
+                        <div>توقيع المدير العام : __________________</div>
+                        <div>توقيع نائب المدير : __________________</div>
+                    </div>
+                </div>
+                <div class="page-break" style="page-break-after: always;"></div>`;
+        });
+    }, { onlyOnce: true });
+};
+
+// ================= EXAM ADMISSION CARD (بطاقة الامتحان) =================
+window.filterStudentsForAdmCard = (selectedClass) => {
+    const studentSelect = document.getElementById('admCardStudent');
+    if(!studentSelect) return;
+
+    studentSelect.innerHTML = '<option value="All">جميع الطلاب (All)</option>';
+    studentSelect.dir = "rtl";
+
+    if (!selectedClass) return;
+
+    const classStudents = allStudents.filter(student => student.class === selectedClass);
+    classStudents.forEach(st => {
+        studentSelect.innerHTML += `<option value="${st.id}">${st.name}</option>`;
+    });
+};
+
+window.printAdmissionCards = () => {
+    // Waxaan si ku meel gaar ah u qasbaynaa @page margin: 0 kaliya inta lagu jiro
+    // print-kan gaarka ah (Kaarka Imtixaanka), si borderka kaarka uu u gaaro
+    // dhamaan afarta dhinac ee warqadda, iyada oo aan la beddelin print-ka
+    // qaybaha kale ee barnaamijka (result cards, jadwallada, iwm).
+    const styleTag = document.createElement('style');
+    styleTag.id = 'admCardFullBleedStyle';
+    styleTag.textContent = `
+        @page { size: auto; margin: 0 !important; }
+        @media print {
+            .admission-card { margin: 0 0 0 0 !important; }
+        }
+    `;
+    document.head.appendChild(styleTag);
+
+    const cleanup = () => {
+        const tag = document.getElementById('admCardFullBleedStyle');
+        if (tag) tag.remove();
+        window.removeEventListener('afterprint', cleanup);
+    };
+    window.addEventListener('afterprint', cleanup);
+
+    window.print();
+    // Fallback in case 'afterprint' doesn't fire on some browsers/webviews
+    setTimeout(cleanup, 3000);
+};
+
+window.generateAdmissionCards = () => {
+    const cls = document.getElementById('admCardClass').value;
+    const examId = document.getElementById('admCardExam').value;
+    const stId = document.getElementById('admCardStudent').value;
+
+    if (!cls) return alert("الرجاء اختيار الفصل!");
+    if (!examId) return alert("الرجاء اختيار الامتحان!");
+
+    const examObj = allExams.find(e => e.id === examId);
+    const examName = examObj ? (examObj.examName || examObj.type) : '';
+
+    let students = allStudents.filter(s => s.class === cls);
+    if (stId !== "All") students = students.filter(s => s.id === stId);
+
+    const container = document.getElementById('admissionCardsContainer');
+    if (students.length === 0) {
+        container.innerHTML = `<p class="text-muted text-center mt-3">لا يوجد طلاب في هذا الفصل.</p>`;
+        return;
+    }
+
+    container.innerHTML = `
+        <div class="no-print" style="text-align: center; margin-bottom: 20px;">
+            <button onclick="printAdmissionCards()" class="btn btn-success fw-bold" style="padding: 10px 30px; font-size: 18px;">
+                🖨️ طباعة البطاقة (Print)
+            </button>
+        </div>
+    `;
+
+    students.forEach(st => {
+        const displayId = st.studentCustomId ? st.studentCustomId : st.id;
+        container.innerHTML += `
+            <div class="admission-card">
+                <div class="adm-header">
+                    <img class="adm-logo" src="Logotasil.jpg" alt="Logo">
+                </div>
+                <div class="adm-line"></div>
+
+                <h2 class="adm-title">بطاقة الامتحان</h2>
+
+                <div class="adm-field">
+                    <span class="adm-label">اسم الطالب/ ـة:</span>
+                    <span class="adm-value">${st.name}</span>
+                </div>
+                <div class="adm-field">
+                    <span class="adm-label">رقم الطالب/ ـة:</span>
+                    <span class="adm-value">${displayId}</span>
+                </div>
+                <div class="adm-field">
+                    <span class="adm-label">الفصل:</span>
+                    <span class="adm-value">${cls}</span>
+                </div>
+                <div class="adm-field">
+                    <span class="adm-label">الامتحان:</span>
+                    <span class="adm-value">${examName}</span>
+                </div>
+
+                <p class="adm-note">يسمح لحامل هذه البطاقه فقط المشاركة في الامتحان</p>
+
+                <div class="adm-seal"><img src="Kar.jpg" alt="Stamp"></div>
+            </div>
+            <div class="page-break" style="page-break-after: always;"></div>`;
+    });
+};
+
+
+        window.loadExamsForVisibility = () => {
+            const examSel = document.getElementById('visibilityExamSelect');
+            examSel.innerHTML = '<option value="All">Dhammaan Imtixaanada (All Exams)</option>';
+            allExams.forEach(e => {
+                examSel.innerHTML += `<option value="${e.id}">${e.examName}</option>`;
+            });
+        };
+
+        window.saveExamVisibilitySettings = () => {
+            const cls = document.getElementById('visibilityClassSelect').value;
+            const examId = document.getElementById('visibilityExamSelect').value;
+            
+            if(!cls) return alert("Fadlan dooro fasalka!");
+
+            let currentAllowed = {};
+            if (globalVisibilityData && globalVisibilityData[cls]) {
+                currentAllowed = globalVisibilityData[cls].allowedExams || {};
+            }
+
+            if (examId === "All") {
+                currentAllowed = { "All": true };
+            } else {
+                delete currentAllowed["All"]; 
+                currentAllowed[examId] = true;
+            }
+
+            set(ref(db, 'exam_visibility/' + cls), {
+                allowedExams: currentAllowed,
+                timestamp: Date.now()
+            }).then(() => {
+                alert("Sharciga aragtida natiijada waa la kaydiyay/kordhiyay!");
+            });
+        };
+
+        window.editVisibilitySetting = (cls) => {
+            document.getElementById('visibilityClassSelect').value = cls;
+            loadExamsForVisibility();
+            alert("Fasalka '" + cls + "' ayaa la doortay. Dooro imtixaan dheeri ah si aad ugu ogolaato, kadib taabo 'Codso Sharciga'.");
+        };
+
+        window.deleteVisibilitySetting = (cls) => {
+            if(confirm(`Ma hubtaa inaad gabi ahaanba tirtirto sharciga aragtida imtixaanada ee fasalka ${cls}?`)) {
+                remove(ref(db, 'exam_visibility/' + cls)).then(() => {
+                    alert("Sharcigii fasalkaas waa la tirtiray.");
+                });
+            }
+        };
+
+function listenToVisibilitySettings() {
+    onValue(ref(db, 'exam_visibility'), (snap) => {
+        const tbody = document.getElementById('visibilitySettingsTbody');
+        if(!tbody) return;
+        tbody.innerHTML = '';
+        
+        if(!snap.exists()){
+            globalVisibilityData = {};
+            tbody.innerHTML = `<tr><td colspan="3" class="text-muted">Ma jiro sharci la dhigay wali. Dhammaan ardaydu waxay u arkaan si caadi ah.</td></tr>`;
+            return;
+        }
+
+        globalVisibilityData = snap.val();
+        snap.forEach(child => {
+            const cls = child.key;
+            const data = child.val();
+            let examsDisplayArr = [];
+            
+            if(data.allowedExams) {
+                if(data.allowedExams["All"]) {
+                    examsDisplayArr.push("Dhammaan Imtixaanada");
+                } else {
+                    for(let eId in data.allowedExams) {
+                        const match = allExams.find(e => e.id === eId);
+                        if(match) examsDisplayArr.push(match.examName);
+                    }
+                }
+            }
+
+            let examDisplay = examsDisplayArr.join(" , ");
+            tbody.innerHTML += `
+                <tr>
+                    <td><b>${cls}</b></td>
+                    <td class="text-primary fw-bold">${examDisplay}</td>
+                    <td>
+                        <button class="btn btn-sm btn-primary me-1" onclick="editVisibilitySetting('${cls}')">
+                            <i class="fas fa-edit"></i> Update
+                        </button>
+                        <button class="btn btn-sm btn-danger" onclick="deleteVisibilitySetting('${cls}')">
+                            <i class="fas fa-trash"></i> Delete
+                        </button>
+                    </td>
+                </tr>`;
+        });
+    });
+}
+
+window.checkStudentResultByID = () => {
+    const searchIdInput = document.getElementById('searchStudentIdInp').value.trim();
+    const resultArea = document.getElementById('studentPortalResultArea');
+    const container = document.getElementById('spCardsContainer'); 
+
+    if (!searchIdInput) {    
+        alert("Fadlan qor ID-gaaga marka hore!");    
+        return;    
+    }    
+
+    container.innerHTML = '';     
+    resultArea.classList.add('d-none');    
+
+    let targetStudent = null;    
+    allStudents.forEach((student) => {    
+        let currentStudentIDStr = student.studentCustomId ? student.studentCustomId.toString().trim() : "";
+        if (currentStudentIDStr === searchIdInput) {    
+            targetStudent = student;     
+        }    
+    });    
+
+    if (!targetStudent) {    
+        alert("Waa khaldan yahay ID-gaaga, ama ardaygan lama helin!");    
+        return;    
+    }    
+
+    // SHURUUDA CUSUB: Haddii ardayga laga xayiray natiijada (isha laga xiray)
+    if (hiddenStudentsList[targetStudent.id] === true) {
+        alert("Natiijada ardaygan waa la xayiray! Fadlan la xiriir maamulka.");
+        return;
+    }
+
+    onValue(ref(db, 'exam_visibility/' + targetStudent.class), (visSnap) => {    
+        // HUBINTA SHARCIYADA: Haddii aysan jirin wax la fasaxay haba yaraatee
+        if(!visSnap.exists()) {
+            alert("Weli lama fasaxin natiijada imtixaanada ee fasalkan!");
+            return;
+        }
+
+        let allowedExamsMap = visSnap.val().allowedExams || {};    
+
+        onValue(ref(db, 'results'), (snap) => {    
+            let allResults = [];    
+            let selectedExamsSet = new Set();    
+            let uniqueSubjects = new Set();     
+            let classStudentDataMap = {};    
+
+            let classStudents = allStudents.filter(s => s.class === targetStudent.class);    
+            classStudents.forEach(st => {    
+                classStudentDataMap[st.id] = { total: 0, id: st.id };    
+            });    
+
+            snap.forEach(child => {    
+                const d = child.val();    
+                if (d.className === targetStudent.class) {    
+                    // Halkan wuxuu ku shaandheynayaa imtixaanada la ogolaaday oo kaliya
+                    if(!allowedExamsMap["All"] && !allowedExamsMap[d.examId]) {    
+                        return;     
+                    }    
+                    allResults.push(d);    
+                    uniqueSubjects.add(d.subjectName);    
+                    let cleanExamName = d.examName.replace(d.academicYear, "").replace(/[()]/g, "").trim();     
+                    selectedExamsSet.add(cleanExamName);    
+
+                    d.results.forEach(res => {    
+                        if (classStudentDataMap[res.studentId]) {    
+                            classStudentDataMap[res.studentId].total += parseFloat(res.score) || 0;    
+                        }    
+                    });    
+                }    
+            });    
+
+            if (allResults.length === 0) {    
+                alert("Weli lama fasaxin natiijada imtixaanada ee fasalkan!");    
+                return;    
+            }    
+
+            const selectedExamsArr = Array.from(selectedExamsSet);    
+            const totalSubjectsCount = uniqueSubjects.size;    
+            const currentAcademicYear = allResults[0].academicYear;    
+
+            let sortedStudents = Object.values(classStudentDataMap).sort((a, b) => b.total - a.total);    
+            let currentRank = 0, lastTotal = -1;    
+            sortedStudents.forEach((st) => {    
+                if (st.total !== lastTotal) currentRank++;    
+                classStudentDataMap[st.id].rank = currentRank;    
+                lastTotal = st.total;    
+            });    
+
+            const stInfo = classStudentDataMap[targetStudent.id];    
+            let studentAverage = totalSubjectsCount > 0 ? (stInfo.total / totalSubjectsCount).toFixed(2) : "0.00";    
+
+            let subjectsMap = {};     
+            allResults.forEach(res => {    
+                const pScore = res.results.find(r => r.studentId === targetStudent.id);    
+                if(pScore) {    
+                    let cleanName = res.examName.replace(currentAcademicYear, "").replace(/[()]/g, "").trim();    
+                    if(!subjectsMap[res.subjectName]) subjectsMap[res.subjectName] = {};    
+                    subjectsMap[res.subjectName][cleanName] = parseFloat(pScore.score) || 0;    
+                }    
+            });    
+
+            let headerHtml = `<tr>    
+                <td class="bg-num" style="width: 10%;">الرقم</td>    
+                <td class="bg-sub" style="width: 42%; text-align: center;">الـمـواد</td>`;    
+                
+            selectedExamsArr.forEach((exName, index) => {    
+                let bgColor = (index % 2 === 0) ? "#f8d7da" : "#cff4fc";    
+                headerHtml += `<td style="background-color: ${bgColor} !important; text-align: center; font-weight: bold; word-break: break-word;">${exName}</td>`;    
+            });    
+            headerHtml += `<td class="bg-total" style="width: 18%;">المجموع</td></tr>`;    
+
+            let rowsHtml = '';    
+            let rowIndex = 1;    
+            for (let subName in subjectsMap) {    
+                let subTotal = 0;    
+                let cellsHtml = '';    
+                selectedExamsArr.forEach(exName => {    
+                    let score = subjectsMap[subName][exName] || 0;    
+                    subTotal += score;    
+                    cellsHtml += `<td style="text-align: center; font-weight: 500;">${score}</td>`;    
+                });    
+                rowsHtml += `<tr>    
+                    <td style="text-align: center; background: #fafafa;">${rowIndex++}</td>    
+                    <td style="text-align: right; font-weight: bold; padding-right: 15px; color: #2c3e50;">${subName}</td>    
+                    ${cellsHtml}    
+                    <td style="text-align: center; font-weight: bold; background: #fffde7; color: #d4af37;">${subTotal}</td>    
+                </tr>`;    
+            }    
+
+            container.innerHTML = `    
+                <div class="student-report-card" style="border: 2px solid #0b132b; padding: 25px; border-radius: 12px; background: #ffffff; direction: rtl; box-shadow: 0 4px 15px rgba(0,0,0,0.05);">    
+                    <div style="text-align: center; margin-bottom: 20px;">    
+                        <h3 style="font-weight: bold; color: #0b132b; margin: 0 0 5px 0; font-family: 'Cairo', sans-serif;">معهد التأصيل للعلوم الإسلامية والعربية</h3>    
+                        <h4 style="font-weight: bold; color: #555; margin: 0 0 5px 0;">الفرع الثانــــــــي</h4>    
+                        <span style="background: #0b132b; color: white; padding: 4px 20px; border-radius: 20px; font-size: 14px; font-weight: bold; display: inline-block; margin-top: 5px;">كشف الدرجات الإلكتروني</span>    
+                        <h6 style="margin-top: 10px; color: #888; font-weight: 600;">العام الدراسي: ${currentAcademicYear}</h6>    
+                    </div>    
+
+                    <div style="background: #f8f9fa; padding: 15px; border-radius: 8px; margin-bottom: 20px; border-right: 5px solid #0b132b;">    
+                        <div class="row g-2" style="font-size: 15px;">    
+                            <div class="col-12"><b>الاسم الكامل:</b> <span style="color:#0288d1; font-weight: bold;">${targetStudent.name}</span></div>    
+                            <div class="col-md-6"><b>الفصل الدراسي:</b> <span>${targetStudent.class}</span></div>    
+                            <div class="col-md-6"><b>رقم الطالب (ID):</b> <span class="badge bg-dark px-2">${searchIdInput}</span></div>    
+                        </div>    
+                    </div>    
+
+                    <table class="table table-bordered align-middle" style="border-color: #dee2e6; font-size: 14px;">    
+                        <thead style="font-family: 'Cairo', sans-serif;">${headerHtml}</thead>    
+                        <tbody>${rowsHtml}</tbody>    
+                    </table>    
+
+                    <table class="table table-bordered text-center" style="margin-top: 20px; font-size: 14px; border: 2px solid #cbd5e1;">    
+                        <thead style="background: #f1f5f9; font-weight: bold; color: #334155;">    
+                            <tr>    
+                                <td style="width: 33.33%;">المجموع الكلي</td>    
+                                <td style="width: 33.33%;">النسبة المئوية</td>    
+                                <td style="width: 33.33%;">المرتبة (الـكـالـنـتـا)</td>    
+                            </tr>    
+                        </thead>    
+                        <tbody>    
+                            <tr style="font-size: 16px; font-weight: bold; color: #0b132b;">    
+                                <td style="background: #f8fafc;">${stInfo.total}</td>    
+                                <td style="background: #f8fafc; color: #2e7d32;">${studentAverage}%</td>    
+                                <td style="background: #fff9db; color: #d32f2f; font-size: 18px;"><i class="fas fa-medal me-1 text-warning"></i> ${stInfo.rank}</td>    
+                            </tr>    
+                        </tbody>    
+                    </table>    
+                </div>    
+            `;    
+            resultArea.classList.remove('d-none');    
+        });    
+    });    
+};
+
+</script>
+</body>
+
+
+
+</html>
